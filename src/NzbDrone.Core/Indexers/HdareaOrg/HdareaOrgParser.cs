@@ -47,7 +47,7 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
                     var detailPage = FetchLinkDetail(href.Value);
                     return new JDownloaderInfo
                     {
-                        DownloadProtocol = DownloadProtocol.JDownloader,
+                        DownloadProtocol = DownloadProtocol.Dlc,
                         Guid = $"HdareaOrg-{GetId(href)}",
                         Title = title.Value,
                         PublishDate = GetDate(a).ToUniversalTime(),

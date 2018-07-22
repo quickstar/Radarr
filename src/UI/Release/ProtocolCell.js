@@ -16,7 +16,7 @@ module.exports = Backgrid.Cell.extend({
                 case 'usenet':
                     label = 'usenet';
                     break;
-                case 'jdownloader':
+                case 'dlc':
                     label = 'dlc';
                     break;
                 default:

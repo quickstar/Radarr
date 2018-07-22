@@ -8,7 +8,7 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
     public class HdareaOrg : HttpIndexerBase<HdareaOrgSettings>
     {
         public override string Name => "hd-area.org";
-        public override DownloadProtocol Protocol => DownloadProtocol.JDownloader;
+        public override DownloadProtocol Protocol => DownloadProtocol.Dlc;
         public override bool SupportsRss => false;
         public override bool SupportsSearch => true;
         public override int PageSize => 50;

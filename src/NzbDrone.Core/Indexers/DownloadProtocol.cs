@@ -5,6 +5,6 @@ namespace NzbDrone.Core.Indexers
         Unknown = 0,
         Usenet = 1,
         Torrent = 2,
-        JDownloader = 3
+        Dlc = 3
     }
 }
