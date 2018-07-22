@@ -162,6 +162,10 @@
     <Compile Include="Extras\Others\OtherExtraFileRenamer.cs" />
     <Compile Include="HealthCheck\Checks\PTPOldSettingsCheck.cs" />
     <Compile Include="Housekeeping\Housekeepers\CleanupOrphanedAlternativeTitles.cs" />
+    <Compile Include="Indexers\HdareaOrg\HdareaOrg.cs" />
+    <Compile Include="Indexers\HdareaOrg\HdareaOrgRequestGenerator.cs" />
+    <Compile Include="Indexers\HdareaOrg\HdareaOrgParser.cs" />
+    <Compile Include="Indexers\HdareaOrg\HdareaOrgSettings.cs" />
     <Compile Include="MediaCover\EnsureMediaCoversCommand.cs" />
     <Compile Include="MediaFiles\Commands\UpdateMovieFileQualityCommand.cs" />
     <Compile Include="MediaFiles\MovieImport\Specifications\GrabbedReleaseQualitySpecification.cs" />
@@ -1007,6 +1011,7 @@
     <Compile Include="Parser\Model\LocalMovie.cs" />
     <Compile Include="Parser\Model\ParsedMovieInfo.cs" />
     <Compile Include="Parser\Model\RemoteMovie.cs" />
+    <Compile Include="Parser\Model\JDownloaderInfo.cs" />
     <Compile Include="Parser\ParsingLeniency.cs" />
     <Compile Include="Parser\RomanNumerals\ArabicRomanNumeral.cs" />
     <Compile Include="Parser\RomanNumerals\IRomanNumeral.cs" />

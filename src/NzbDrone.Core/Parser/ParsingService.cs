@@ -361,6 +361,8 @@ namespace NzbDrone.Core.Parser
             List<string> possibleTitles = new List<string>();
 
             possibleTitles.Add(searchCriteria.Movie.CleanTitle);
+            var cleanSeriesTitle = searchCriteria.Movie.Title.Replace("'", string.Empty).CleanSeriesTitle();
+            possibleTitles.Add(cleanSeriesTitle);
 
             foreach (AlternativeTitle altTitle in searchCriteria.Movie.AlternativeTitles)
             {
@@ -371,7 +373,7 @@ namespace NzbDrone.Core.Parser
 
             foreach (string title in possibleTitles)
             {
-                if (title == parsedMovieInfo.MovieTitle.CleanSeriesTitle())
+                if (title == cleanTitle)
                 {
                     possibleMovie = searchCriteria.Movie;
                 }
@@ -383,16 +385,15 @@ namespace NzbDrone.Core.Parser
 
                     //_logger.Debug(cleanTitle);
 
-                    if (title.Replace(arabicNumeral, romanNumeral) == parsedMovieInfo.MovieTitle.CleanSeriesTitle())
+                    if (title.Replace(arabicNumeral, romanNumeral) == cleanTitle)
                     {
                         possibleMovie = searchCriteria.Movie;
                     }
 
-                    if (title == parsedMovieInfo.MovieTitle.CleanSeriesTitle().Replace(arabicNumeral, romanNumeral))
+                    if (title == cleanTitle.Replace(arabicNumeral, romanNumeral))
                     {
                         possibleMovie = searchCriteria.Movie;
                     }
-
                 }
             }
 

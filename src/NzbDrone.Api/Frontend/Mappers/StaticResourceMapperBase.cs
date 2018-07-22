@@ -50,6 +50,5 @@ namespace NzbDrone.Api.Frontend.Mappers
         {
             return File.OpenRead(filePath);
         }
-
     }
 }
