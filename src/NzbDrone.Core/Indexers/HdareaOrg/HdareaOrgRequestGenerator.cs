@@ -19,15 +19,11 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
         public IndexerPageableRequestChain GetSearchRequests(MovieSearchCriteria searchCriteria)
         {
             var pageableRequests = new IndexerPageableRequestChain();
-            pageableRequests.Add(GetRequest(RemoveSpecialChars(searchCriteria.Movie.Title)));
-            searchCriteria.Movie.AlternativeTitles.ForEach(t => pageableRequests.Add(GetRequest(RemoveSpecialChars(t.Title))));
+            pageableRequests.Add(GetRequest(Parser.Parser.RemoveSpecialChars(searchCriteria.Movie.Title)));
+            searchCriteria.Movie.AlternativeTitles.ForEach(t => pageableRequests.Add(GetRequest(Parser.Parser.RemoveSpecialChars(t.Title))));
             return pageableRequests;
         }
 
-        private static string RemoveSpecialChars(string title)
-        {
-            return title.Replace("'", string.Empty).Replace(":", string.Empty);
-        }
 
         public Func<IDictionary<string, string>> GetCookies { get; set; }
         public Action<IDictionary<string, string>, DateTime?> CookiesUpdater { get; set; }

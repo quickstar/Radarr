@@ -361,7 +361,7 @@ namespace NzbDrone.Core.Parser
             List<string> possibleTitles = new List<string>();
 
             possibleTitles.Add(searchCriteria.Movie.CleanTitle);
-            var cleanSeriesTitle = searchCriteria.Movie.Title.Replace("'", string.Empty).CleanSeriesTitle();
+            var cleanSeriesTitle = Parser.RemoveSpecialChars(searchCriteria.Movie.Title).CleanSeriesTitle();
             possibleTitles.Add(cleanSeriesTitle);
 
             foreach (AlternativeTitle altTitle in searchCriteria.Movie.AlternativeTitles)

@@ -350,6 +350,11 @@ namespace NzbDrone.Core.Parser
             return t;
         }
 
+        public static string RemoveSpecialChars(string title)
+        {
+            return title.Replace("'", string.Empty).Replace(":", string.Empty);
+        }
+
         public static string NormalizeImdbId(string imdbId)
         {
             if (imdbId.Length > 2)
