@@ -61,10 +61,10 @@ namespace NzbDrone.Core.Indexers
         {
             var enabledIndexers = GetAvailableProviders().Where(n => ((IndexerDefinition)n.Definition).EnableSearch);
 
-            if (filterBlockedIndexers)
-            {
-                return FilterBlockedIndexers(enabledIndexers).ToList();
-            }
+            //if (filterBlockedIndexers)
+            //{
+            //    return FilterBlockedIndexers(enabledIndexers).ToList();
+            //}
 
             return enabledIndexers.ToList();
         }

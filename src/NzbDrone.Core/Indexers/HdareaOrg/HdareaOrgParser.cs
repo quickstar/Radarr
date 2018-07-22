@@ -13,8 +13,8 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
 {
     public class HdareaOrgParser : IParseIndexerResponse
     {
-        private readonly HdareaOrgSettings _settings;
         private readonly Logger _logger;
+        private readonly HdareaOrgSettings _settings;
 
         public HdareaOrgParser(HdareaOrgSettings settings, Logger logger)
         {
@@ -55,7 +55,7 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
                         DownloadUrl = GetDownloadUrl(detailPage),
                         ShareOnlineBizUrl = GetDownloadUrl(detailPage),
                         ImdbId = GetImdb(detailPage),
-                        Size = GetSize(detailPage),
+                        Size = GetSize(detailPage)
                     };
                 }).Cast<ReleaseInfo>().OrderBy(jdi => jdi.PublishDate).ToList();
                 DateTime stop = DateTime.UtcNow;
@@ -168,7 +168,7 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
                 n.Attributes.Any(a =>
                     a.Name.EqualsIgnoreCase("style") && a.Value.EqualsIgnoreCase("display:inline;")));
 
-            foreach (var link in linkList.Where(l => l.FirstChild.InnerText.EqualsIgnoreCase("Share-Online.biz")))
+            foreach (var link in linkList.Where(l => CheckText(l.FirstChild.InnerText)))
             {
                 var escapedValue = link.FirstChild.Attributes["href"].Value;
                 var unescaped = HtmlEntity.DeEntitize(escapedValue);
@@ -176,6 +176,14 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
             }
 
             return string.Empty;
+        }
+
+        private bool CheckText(string innerText)
+        {
+            bool isShareOnline = innerText.EqualsIgnoreCase("Share-Online.biz");
+            isShareOnline |= innerText.EqualsIgnoreCase("Share Online");
+            isShareOnline |= innerText.EqualsIgnoreCase("Share Online | Uploaded");
+            return isShareOnline;
         }
     }
 }
