@@ -14,10 +14,12 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
     public class HdareaOrgParser : IParseIndexerResponse
     {
         private readonly HdareaOrgSettings _settings;
+        private readonly Logger _logger;
 
-        public HdareaOrgParser(HdareaOrgSettings settings)
+        public HdareaOrgParser(HdareaOrgSettings settings, Logger logger)
         {
             _settings = settings;
+            _logger = logger;
         }
 
         public IList<ReleaseInfo> ParseResponse(IndexerResponse indexerResponse)

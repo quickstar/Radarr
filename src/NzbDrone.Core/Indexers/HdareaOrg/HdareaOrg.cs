@@ -24,7 +24,7 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
 
         public override IParseIndexerResponse GetParser()
         {
-            return new HdareaOrgParser(Settings);
+            return new HdareaOrgParser(Settings, _logger);
         }
     }
 }
