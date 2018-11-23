@@ -12,9 +12,7 @@ namespace NzbDrone.Core.Configuration
         bool IsDefined(string key);
 
         //Download Client
-        string DownloadedMoviesFolder { get; set; }
         string DownloadClientWorkingFolders { get; set; }
-        int DownloadedMoviesScanInterval { get; set; }
         int DownloadClientHistoryLimit { get; set; }
 
         //Completed/Failed Download Handling (Download client)
@@ -99,5 +97,10 @@ namespace NzbDrone.Core.Configuration
         string ProxyPassword { get; }
         string ProxyBypassFilter { get; }
         bool ProxyBypassLocalAddresses { get; }
+
+        // Backups
+        string BackupFolder { get; }
+        int BackupInterval { get; }
+        int BackupRetention { get; }
     }
 }

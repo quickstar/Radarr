@@ -543,5 +543,13 @@ namespace NzbDrone.Common.Disk
                 }
             }
         }
+
+        public void SaveStream(Stream stream, string path)
+        {
+            using (var fileStream = OpenWriteStream(path))
+            {
+                stream.CopyTo(fileStream);
+            }
+        }
     }
 }

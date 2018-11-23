@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using FizzWare.NBuilder;
 using Moq;
@@ -29,9 +29,6 @@ namespace NzbDrone.Core.Test.MediaFiles
         [SetUp]
         public void Setup()
         {
-            Mocker.GetMock<IConfigService>().SetupGet(c => c.DownloadedMoviesFolder)
-                  .Returns(_droneFactory);
-
             Mocker.GetMock<IDownloadedMovieImportService>()
                 .Setup(v => v.ProcessRootFolder(It.IsAny<DirectoryInfo>()))
                 .Returns(new List<ImportResult>());

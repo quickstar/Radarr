@@ -95,7 +95,6 @@ namespace NzbDrone.Core.Movies
 
         public PagingSpec<Movie> MoviesWithoutFiles(PagingSpec<Movie> pagingSpec)
         {
-
             pagingSpec.TotalRecords = GetMoviesWithoutFilesQuery(pagingSpec).GetRowCount();
             pagingSpec.Records = GetMoviesWithoutFilesQuery(pagingSpec).ToList();
 
@@ -159,7 +158,7 @@ namespace NzbDrone.Core.Movies
 
         public SortBuilder<Movie> GetMoviesWithoutFilesQuery(PagingSpec<Movie> pagingSpec)
         {
-            return Query.Where(pagingSpec.FilterExpression)
+            return Query.Where(pagingSpec.FilterExpressions.FirstOrDefault())
                              .AndWhere(m => m.MovieFileId == 0)
                              .OrderBy(pagingSpec.OrderByClause(x => x.SortTitle), pagingSpec.ToSortDirection())
                              .Skip(pagingSpec.PagingOffset())
@@ -176,7 +175,7 @@ namespace NzbDrone.Core.Movies
 
         private SortBuilder<Movie> MoviesWhereCutoffUnmetQuery(PagingSpec<Movie> pagingSpec, List<QualitiesBelowCutoff> qualitiesBelowCutoff)
 		{
-            return Query.Where(pagingSpec.FilterExpression)
+            return Query.Where(pagingSpec.FilterExpressions.FirstOrDefault())
                  .AndWhere(m => m.MovieFileId != 0)
                  .AndWhere(BuildQualityCutoffWhereClause(qualitiesBelowCutoff))
                  .OrderBy(pagingSpec.OrderByClause(x => x.SortTitle), pagingSpec.ToSortDirection())
