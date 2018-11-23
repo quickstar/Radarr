@@ -102,10 +102,6 @@ _NCrunch_*
 _TeamCity*
 
 # Radarr
-Backups/
-logs/
-MediaCover/
-UpdateLogs/
 xdg/
 config.xml
 logs.db*
@@ -124,8 +120,6 @@ _tests/
 *.Result.xml
 setup/Output/
 *.~is
-
-UI.Phantom/
 
 # VS outout folders
 bin
