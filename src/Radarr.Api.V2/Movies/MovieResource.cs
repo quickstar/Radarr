@@ -21,7 +21,7 @@ namespace Radarr.Api.V2.Movies
          
         //View Only
         public string Title { get; set; }
-        public List<AlternativeTitleResource> AlternativeTitles { get; set; }
+        public List<AlternativeTitleResource> AlternateTitles { get; set; }
         public int? SecondaryYear { get; set; }
         public int SecondaryYearSourceId { get; set; }
         public string SortTitle { get; set; }
@@ -146,7 +146,7 @@ namespace Radarr.Api.V2.Movies
                 Tags = model.Tags,
                 Added = model.Added,
                 AddOptions = model.AddOptions,
-                AlternativeTitles = model.AlternativeTitles.ToResource(),
+                AlternateTitles = model.AlternativeTitles.ToResource(),
                 Ratings = model.Ratings,
                 MovieFile = movieFile,
                 YouTubeTrailerId = model.YouTubeTrailerId,

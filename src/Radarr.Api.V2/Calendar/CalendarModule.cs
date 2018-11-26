@@ -3,33 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using Nancy;
 using Radarr.Api.V2.Movies;
-using NzbDrone.Core.Datastore.Events;
-using NzbDrone.Core.MediaCover;
-using NzbDrone.Core.MediaFiles;
-using NzbDrone.Core.MediaFiles.Events;
-using NzbDrone.Core.Messaging.Events;
 using NzbDrone.Core.Movies;
-using NzbDrone.Core.Movies.Events;
-using NzbDrone.Core.Validation.Paths;
-using NzbDrone.Core.Validation;
-using NzbDrone.Core.DecisionEngine;
 using NzbDrone.SignalR;
 using Radarr.Http;
 
 namespace Radarr.Api.V2.Calendar
 {
-    public class CalendarModule : MovieModule
+    public class CalendarModule : RadarrRestModuleWithSignalR<MovieResource, Movie>
     {
+        protected readonly IMovieService _moviesService;
+
         public CalendarModule(IBroadcastSignalRMessage signalR,
-                            IMovieService moviesService,
-                            IMapCoversToLocal coverMapper,
-                            RootFolderValidator rootFolderValidator,
-                            MoviePathValidator moviesPathValidator,
-                            MovieExistsValidator moviesExistsValidator,
-                            MovieAncestorValidator moviesAncestorValidator,
-                            ProfileExistsValidator profileExistsValidator)
-            : base(signalR, moviesService, coverMapper, rootFolderValidator, moviesPathValidator, moviesExistsValidator, moviesAncestorValidator, profileExistsValidator)
+                            IMovieService moviesService)
+            : base(signalR, "calendar")
         {
+            _moviesService = moviesService;
+
             GetResourceAll = GetCalendar;
         }
 
@@ -50,6 +39,15 @@ namespace Radarr.Api.V2.Calendar
             var resources = _moviesService.GetMoviesBetweenDates(start, end, includeUnmonitored).Select(MapToResource);
 
             return resources.OrderBy(e => e.InCinemas).ToList();
+        }
+
+        protected MovieResource MapToResource(Movie movie)
+        {
+            if (movie == null) return null;
+
+            var resource = movie.ToResource();
+
+            return resource;
         }
     }
 }

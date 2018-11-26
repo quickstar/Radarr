@@ -59,7 +59,7 @@ namespace Radarr.Api.V2.MovieFiles
 
         private List<MovieFileResource> GetMovieFiles()
         {
-            var movieIdQuery = Request.Query.SeriesId;
+            var movieIdQuery = Request.Query.MovieId;
             var movieFileIdsQuery = Request.Query.MovieFileIds;
 
             if (!movieIdQuery.HasValue && !movieFileIdsQuery.HasValue)

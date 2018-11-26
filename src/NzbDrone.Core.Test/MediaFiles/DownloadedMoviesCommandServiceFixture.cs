@@ -20,7 +20,6 @@ namespace NzbDrone.Core.Test.MediaFiles
     [TestFixture]
     public class DownloadedMoviesCommandServiceFixture : CoreTest<DownloadedMovieCommandService>
     {
-        private string _droneFactory = "c:\\drop\\".AsOsAgnostic();
         private string _downloadFolder = "c:\\drop_other\\Show.S01E01\\".AsOsAgnostic();
         private string _downloadFile = "c:\\drop_other\\Show.S01E01.mkv".AsOsAgnostic();
 
@@ -71,36 +70,6 @@ namespace NzbDrone.Core.Test.MediaFiles
             Mocker.GetMock<ITrackedDownloadService>()
                   .Setup(s => s.Find("sab1"))
                   .Returns(_trackedDownload);
-        }
-
-        [Test]
-        public void should_process_dronefactory_if_path_is_not_specified()
-        {
-            GivenExistingFolder(_droneFactory);
-
-            Subject.Execute(new DownloadedMoviesScanCommand());
-
-            Mocker.GetMock<IDownloadedMovieImportService>().Verify(c => c.ProcessRootFolder(It.IsAny<DirectoryInfo>()), Times.Once());
-        }
-
-        [Test]
-        public void should_skip_import_if_dronefactory_doesnt_exist()
-        {
-            Subject.Execute(new DownloadedMoviesScanCommand());
-
-            Mocker.GetMock<IDownloadedMovieImportService>().Verify(c => c.ProcessRootFolder(It.IsAny<DirectoryInfo>()), Times.Never());
-
-            ExceptionVerification.ExpectedWarns(1);
-        }
-
-        [Test]
-        public void should_ignore_downloadclientid_if_path_is_not_specified()
-        {
-            GivenExistingFolder(_droneFactory);
-
-            Subject.Execute(new DownloadedMoviesScanCommand() { DownloadClientId = "sab1" });
-
-            Mocker.GetMock<IDownloadedMovieImportService>().Verify(c => c.ProcessRootFolder(It.IsAny<DirectoryInfo>()), Times.Once());
         }
 
         [Test]

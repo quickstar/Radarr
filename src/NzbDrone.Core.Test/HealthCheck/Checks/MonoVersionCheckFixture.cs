@@ -18,8 +18,7 @@ namespace NzbDrone.Core.Test.HealthCheck.Checks
         }
 
         [TestCase("5.10")]
-        [TestCase("4.6")]
-        [TestCase("4.4.2")]
+        [TestCase("4.8")]
         public void should_return_ok(string version)
         {
             GivenOutput(version);
@@ -37,6 +36,7 @@ namespace NzbDrone.Core.Test.HealthCheck.Checks
         [TestCase("3.8")]
         [TestCase("4.0.0.0")]
         [TestCase("4.2")]
+        [TestCase("4.4.2")]
         public void should_return_warning(string version)
         {
             GivenOutput(version);

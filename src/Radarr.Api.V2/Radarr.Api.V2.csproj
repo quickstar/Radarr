@@ -106,6 +106,7 @@
     <Compile Include="DiskSpace\DiskSpaceResource.cs" />
     <Compile Include="DownloadClient\DownloadClientModule.cs" />
     <Compile Include="DownloadClient\DownloadClientResource.cs" />
+    <Compile Include="FileSystem\FileSystemModule.cs" />
     <Compile Include="Health\HealthModule.cs" />
     <Compile Include="Health\HealthResource.cs" />
     <Compile Include="History\HistoryModule.cs" />
