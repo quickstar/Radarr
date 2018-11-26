@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { cancelLookupSeries } from 'Store/Actions/importMovieActions';
+import { cancelLookupMovie } from 'Store/Actions/importMovieActions';
 import ImportMovieFooter from './ImportMovieFooter';
 
 function isMixed(items, selectedIds, defaultValue, key) {
@@ -22,7 +22,7 @@ function createMapStateToProps() {
       } = addMovie.defaults;
 
       const {
-        isLookingUpSeries,
+        isLookingUpMovie,
         isImporting,
         items
       } = importMovie;
@@ -32,7 +32,7 @@ function createMapStateToProps() {
 
       return {
         selectedCount: selectedIds.length,
-        isLookingUpSeries,
+        isLookingUpMovie,
         isImporting,
         defaultMonitor,
         defaultQualityProfileId,
@@ -44,7 +44,7 @@ function createMapStateToProps() {
 }
 
 const mapDispatchToProps = {
-  onCancelLookupPress: cancelLookupSeries
+  onCancelLookupPress: cancelLookupMovie
 };
 
 export default connect(createMapStateToProps, mapDispatchToProps)(ImportMovieFooter);

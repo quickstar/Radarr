@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import getRelativeDate from 'Utilities/Date/getRelativeDate';
 import { icons } from 'Helpers/Props';
 import IconButton from 'Components/Link/IconButton';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
@@ -71,10 +70,9 @@ class MovieIndexPoster extends Component {
       id,
       title,
       monitored,
+      hasFile,
       status,
       titleSlug,
-      nextAiring,
-      statistics,
       images,
       posterWidth,
       posterHeight,
@@ -93,13 +91,6 @@ class MovieIndexPoster extends Component {
       onSearchPress,
       ...otherProps
     } = this.props;
-
-    const {
-      seasonCount,
-      episodeCount,
-      episodeFileCount,
-      totalEpisodeCount
-    } = statistics;
 
     const {
       hasPosterError,
@@ -181,10 +172,8 @@ class MovieIndexPoster extends Component {
 
           <MovieIndexProgressBar
             monitored={monitored}
+            hasFile={hasFile}
             status={status}
-            episodeCount={episodeCount}
-            episodeFileCount={episodeFileCount}
-            totalEpisodeCount={totalEpisodeCount}
             posterWidth={posterWidth}
             detailedProgressBar={detailedProgressBar}
           />
@@ -210,25 +199,7 @@ class MovieIndexPoster extends Component {
               </div>
           }
 
-          {
-            nextAiring &&
-              <div className={styles.nextAiring}>
-                {
-                  getRelativeDate(
-                    nextAiring,
-                    shortDateFormat,
-                    showRelativeDates,
-                    {
-                      timeFormat,
-                      timeForToday: true
-                    }
-                  )
-                }
-              </div>
-          }
-
           <MovieIndexPosterInfo
-            seasonCount={seasonCount}
             qualityProfile={qualityProfile}
             showQualityProfile={showQualityProfile}
             showRelativeDates={showRelativeDates}
@@ -260,10 +231,9 @@ MovieIndexPoster.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,
+  hasFile: PropTypes.bool.isRequired,
   status: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
-  nextAiring: PropTypes.string,
-  statistics: PropTypes.object.isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   posterWidth: PropTypes.number.isRequired,
   posterHeight: PropTypes.number.isRequired,

@@ -5,7 +5,7 @@ import { batchActions } from 'redux-batched-actions';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
 import getSectionState from 'Utilities/State/getSectionState';
 import updateSectionState from 'Utilities/State/updateSectionState';
-import getNewSeries from 'Utilities/Series/getNewSeries';
+import getNewMovie from 'Utilities/Movie/getNewMovie';
 import { createThunk, handleThunks } from 'Store/thunks';
 import createHandleActions from './Creators/createHandleActions';
 import { set, removeItem, updateItem } from './baseActions';
@@ -23,7 +23,7 @@ const queue = [];
 // State
 
 export const defaultState = {
-  isLookingUpSeries: false,
+  isLookingUpMovie: false,
   isImporting: false,
   isImported: false,
   importError: null,
@@ -33,9 +33,9 @@ export const defaultState = {
 //
 // Actions Types
 
-export const QUEUE_LOOKUP_MOVIE = 'importMovie/queueLookupSeries';
-export const START_LOOKUP_MOVIE = 'importMovie/startLookupSeries';
-export const CANCEL_LOOKUP_MOVIE = 'importMovie/cancelLookupSeries';
+export const QUEUE_LOOKUP_MOVIE = 'importMovie/queueLookupMovie';
+export const START_LOOKUP_MOVIE = 'importMovie/startLookupMovie';
+export const CANCEL_LOOKUP_MOVIE = 'importMovie/cancelLookupMovie';
 export const CLEAR_IMPORT_MOVIE = 'importMovie/clearImportMovie';
 export const SET_IMPORT_MOVIE_VALUE = 'importMovie/setImportMovieValue';
 export const IMPORT_MOVIE = 'importMovie/importMovie';
@@ -43,11 +43,11 @@ export const IMPORT_MOVIE = 'importMovie/importMovie';
 //
 // Action Creators
 
-export const queueLookupSeries = createThunk(QUEUE_LOOKUP_MOVIE);
-export const startLookupSeries = createThunk(START_LOOKUP_MOVIE);
+export const queueLookupMovie = createThunk(QUEUE_LOOKUP_MOVIE);
+export const startLookupMovie = createThunk(START_LOOKUP_MOVIE);
 export const importMovie = createThunk(IMPORT_MOVIE);
 export const clearImportMovie = createAction(CLEAR_IMPORT_MOVIE);
-export const cancelLookupSeries = createAction(CANCEL_LOOKUP_MOVIE);
+export const cancelLookupMovie = createAction(CANCEL_LOOKUP_MOVIE);
 
 export const setImportMovieValue = createAction(SET_IMPORT_MOVIE_VALUE, (payload) => {
   return {
@@ -100,7 +100,7 @@ export const actionHandlers = handleThunks({
     }
 
     if (term && term.length > 2) {
-      dispatch(startLookupSeries({ start: true }));
+      dispatch(startLookupMovie({ start: true }));
     }
   },
 
@@ -112,18 +112,18 @@ export const actionHandlers = handleThunks({
     const state = getState().importMovie;
 
     const {
-      isLookingUpSeries,
+      isLookingUpMovie,
       items
     } = state;
 
     const queueId = queue[0];
 
-    if (payload.start && !isLookingUpSeries) {
-      dispatch(set({ section, isLookingUpSeries: true }));
-    } else if (!isLookingUpSeries) {
+    if (payload.start && !isLookingUpMovie) {
+      dispatch(set({ section, isLookingUpMovie: true }));
+    } else if (!isLookingUpMovie) {
       return;
     } else if (!queueId) {
-      dispatch(set({ section, isLookingUpSeries: false }));
+      dispatch(set({ section, isLookingUpMovie: false }));
       return;
     }
 
@@ -156,7 +156,7 @@ export const actionHandlers = handleThunks({
         error: null,
         items: data,
         queued: false,
-        selectedSeries: queued.selectedSeries || data[0],
+        selectedMovie: queued.selectedMovie || data[0],
         updateOnly: true
       }));
     });
@@ -176,7 +176,7 @@ export const actionHandlers = handleThunks({
     request.always(() => {
       concurrentLookups--;
 
-      dispatch(startLookupSeries());
+      dispatch(startLookupMovie());
     });
   },
 
@@ -187,14 +187,14 @@ export const actionHandlers = handleThunks({
     const items = getState().importMovie.items;
     const addedIds = [];
 
-    const allNewSeries = ids.reduce((acc, id) => {
+    const allNewMovies = ids.reduce((acc, id) => {
       const item = _.find(items, { id });
-      const selectedSeries = item.selectedSeries;
+      const selectedMovie = item.selectedMovie;
 
       // Make sure we have a selected series and
       // the same series hasn't been added yet.
-      if (selectedSeries && !_.some(acc, { tvdbId: selectedSeries.tvdbId })) {
-        const newSeries = getNewSeries(_.cloneDeep(selectedSeries), item);
+      if (selectedMovie && !_.some(acc, { tmdbId: selectedMovie.tmdbId })) {
+        const newSeries = getNewMovie(_.cloneDeep(selectedMovie), item);
         newSeries.path = item.path;
 
         addedIds.push(id);
@@ -208,7 +208,7 @@ export const actionHandlers = handleThunks({
       url: '/movie/import',
       method: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify(allNewSeries)
+      data: JSON.stringify(allNewMovies)
     });
 
     promise.done((data) => {
@@ -219,7 +219,7 @@ export const actionHandlers = handleThunks({
           isImported: true
         }),
 
-        ...data.map((series) => updateItem({ section: 'series', ...series })),
+        ...data.map((series) => updateItem({ section: 'movies', ...series })),
 
         ...addedIds.map((id) => removeItem({ section, id }))
       ]));
@@ -251,7 +251,7 @@ export const actionHandlers = handleThunks({
 export const reducers = createHandleActions({
 
   [CANCEL_LOOKUP_MOVIE]: function(state) {
-    return Object.assign({}, state, { isLookingUpSeries: false });
+    return Object.assign({}, state, { isLookingUpMovie: false });
   },
 
   [CLEAR_IMPORT_MOVIE]: function(state) {

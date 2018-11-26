@@ -50,9 +50,9 @@ class AddNewMovieModalContentConnector extends Component {
     this.props.setAddMovieDefault({ [name]: value });
   }
 
-  onAddSeriesPress = (searchForMissingEpisodes) => {
+  onAddMoviePress = (searchForMissingEpisodes) => {
     const {
-      tvdbId,
+      tmdbId,
       rootFolderPath,
       monitor,
       qualityProfileId,
@@ -60,7 +60,7 @@ class AddNewMovieModalContentConnector extends Component {
     } = this.props;
 
     this.props.addMovie({
-      tvdbId,
+      tmdbId,
       rootFolderPath: rootFolderPath.value,
       monitor: monitor.value,
       qualityProfileId: qualityProfileId.value,
@@ -77,14 +77,14 @@ class AddNewMovieModalContentConnector extends Component {
       <AddNewMovieModalContent
         {...this.props}
         onInputChange={this.onInputChange}
-        onAddSeriesPress={this.onAddSeriesPress}
+        onAddMoviePress={this.onAddMoviePress}
       />
     );
   }
 }
 
 AddNewMovieModalContentConnector.propTypes = {
-  tvdbId: PropTypes.number.isRequired,
+  tmdbId: PropTypes.number.isRequired,
   rootFolderPath: PropTypes.object,
   monitor: PropTypes.object.isRequired,
   qualityProfileId: PropTypes.object,

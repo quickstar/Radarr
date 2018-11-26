@@ -14,8 +14,8 @@ function ImportMovieRow(props) {
     id,
     monitor,
     qualityProfileId,
-    selectedSeries,
-    isExistingSeries,
+    selectedMovie,
+    isExistingMovie,
     isSelected,
     onSelectedChange,
     onInputChange
@@ -27,7 +27,7 @@ function ImportMovieRow(props) {
         inputClassName={styles.selectInput}
         id={id}
         isSelected={isSelected}
-        isDisabled={!selectedSeries || isExistingSeries}
+        isDisabled={!selectedMovie || isExistingMovie}
         onSelectedChange={onSelectedChange}
       />
 
@@ -37,7 +37,7 @@ function ImportMovieRow(props) {
 
       <VirtualTableRowCell className={styles.monitor}>
         <FormInputGroup
-          type={inputTypes.MONITOR_EPISODES_SELECT}
+          type={inputTypes.MOVIE_MONITORED_SELECT}
           name="monitor"
           value={monitor}
           onChange={onInputChange}
@@ -56,7 +56,7 @@ function ImportMovieRow(props) {
       <VirtualTableRowCell className={styles.series}>
         <ImportMovieSelectMovieConnector
           id={id}
-          isExistingSeries={isExistingSeries}
+          isExistingMovie={isExistingMovie}
         />
       </VirtualTableRowCell>
     </VirtualTableRow>
@@ -68,8 +68,8 @@ ImportMovieRow.propTypes = {
   id: PropTypes.string.isRequired,
   monitor: PropTypes.string.isRequired,
   qualityProfileId: PropTypes.number.isRequired,
-  selectedSeries: PropTypes.object,
-  isExistingSeries: PropTypes.bool.isRequired,
+  selectedMovie: PropTypes.object,
+  isExistingMovie: PropTypes.bool.isRequired,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   queued: PropTypes.bool.isRequired,
   isSelected: PropTypes.bool,

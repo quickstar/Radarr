@@ -98,7 +98,7 @@ class MediaManagement extends Component {
                         <FormInputGroup
                           type={inputTypes.CHECK}
                           name="deleteEmptyFolders"
-                          helpText="Delete empty series and season folders during disk scan and when episode files are deleted"
+                          helpText="Delete empty movie folders during disk scan and when movie files are deleted"
                           onChange={onInputChange}
                           {...settings.deleteEmptyFolders}
                         />
@@ -153,7 +153,7 @@ class MediaManagement extends Component {
                         <FormInputGroup
                           type={inputTypes.CHECK}
                           name="importExtraFiles"
-                          helpText="Import matching extra files (subtitles, nfo, etc) after importing an episode file"
+                          helpText="Import matching extra files (subtitles, nfo, etc) after importing an movie file"
                           onChange={onInputChange}
                           {...settings.importExtraFiles}
                         />
@@ -183,12 +183,12 @@ class MediaManagement extends Component {
                   legend="File Management"
                 >
                   <FormGroup size={sizes.MEDIUM}>
-                    <FormLabel>Ignore Deleted Episodes</FormLabel>
+                    <FormLabel>Ignore Deleted Movies</FormLabel>
 
                     <FormInputGroup
                       type={inputTypes.CHECK}
                       name="autoUnmonitorPreviouslyDownloadedEpisodes"
-                      helpText="Episodes deleted from disk are automatically unmonitored in Radarr"
+                      helpText="Movies deleted from disk are automatically unmonitored in Radarr"
                       onChange={onInputChange}
                       {...settings.autoUnmonitorPreviouslyDownloadedEpisodes}
                     />
@@ -268,7 +268,7 @@ class MediaManagement extends Component {
                     <FormInputGroup
                       type={inputTypes.PATH}
                       name="recycleBin"
-                      helpText="Episode files will go here when deleted instead of being permanently deleted"
+                      helpText="Movie files will go here when deleted instead of being permanently deleted"
                       onChange={onInputChange}
                       {...settings.recycleBin}
                     />

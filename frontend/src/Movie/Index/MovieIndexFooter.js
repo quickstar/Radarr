@@ -39,23 +39,28 @@ function MovieIndexFooter({ movies }) {
     <div className={styles.footer}>
       <div>
         <div className={styles.legendItem}>
-          <div className={styles.continuing} />
-          <div>Continuing (All episodes downloaded)</div>
+          <div className={styles.ended} />
+          <div>Downloaded and Monitored</div>
         </div>
 
         <div className={styles.legendItem}>
-          <div className={styles.ended} />
-          <div>Ended (All episodes downloaded)</div>
+          <div className={styles.availNotMonitored} />
+          <div>Downloaded, but not Monitored</div>
         </div>
 
         <div className={styles.legendItem}>
           <div className={styles.missingMonitored} />
-          <div>Missing Episodes (Series monitored)</div>
+          <div>Missing, but not Monitored</div>
         </div>
 
         <div className={styles.legendItem}>
           <div className={styles.missingUnmonitored} />
-          <div>Missing Episodes (Series not monitored)</div>
+          <div>Missing, Monitored and considered Available</div>
+        </div>
+
+        <div className={styles.legendItem}>
+          <div className={styles.continuing} />
+          <div>Unreleased</div>
         </div>
       </div>
 

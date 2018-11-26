@@ -155,7 +155,7 @@ class SeriesEditor extends Component {
       columns
     } = this.state;
 
-    const selectedSeriesIds = this.getSelectedIds();
+    const selectedMovieIds = this.getSelectedIds();
 
     return (
       <PageContent title="Series Editor">
@@ -223,8 +223,8 @@ class SeriesEditor extends Component {
         </PageContentBodyConnector>
 
         <SeriesEditorFooter
-          seriesIds={selectedSeriesIds}
-          selectedCount={selectedSeriesIds.length}
+          seriesIds={selectedMovieIds}
+          selectedCount={selectedMovieIds.length}
           isSaving={isSaving}
           saveError={saveError}
           isDeleting={isDeleting}
@@ -236,7 +236,7 @@ class SeriesEditor extends Component {
 
         <OrganizeSeriesModal
           isOpen={this.state.isOrganizingSeriesModalOpen}
-          seriesIds={selectedSeriesIds}
+          seriesIds={selectedMovieIds}
           onModalClose={this.onOrganizeSeriesModalClose}
         />
       </PageContent>

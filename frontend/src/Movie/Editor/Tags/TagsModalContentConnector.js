@@ -10,8 +10,8 @@ function createMapStateToProps() {
     (state, { seriesIds }) => seriesIds,
     createAllMoviesSelector(),
     createTagsSelector(),
-    (seriesIds, allSeries, tagList) => {
-      const series = _.intersectionWith(allSeries, seriesIds, (s, id) => {
+    (seriesIds, allMovies, tagList) => {
+      const series = _.intersectionWith(allMovies, seriesIds, (s, id) => {
         return s.id === id;
       });
 

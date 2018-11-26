@@ -37,7 +37,7 @@ class SelectSeriesModalContentConnector extends Component {
   //
   // Listeners
 
-  onSeriesSelect = (seriesId) => {
+  onMovieSelect = (seriesId) => {
     const series = _.find(this.props.items, { id: seriesId });
 
     this.props.ids.forEach((id) => {
@@ -59,7 +59,7 @@ class SelectSeriesModalContentConnector extends Component {
     return (
       <SelectSeriesModalContent
         {...this.props}
-        onSeriesSelect={this.onSeriesSelect}
+        onMovieSelect={this.onMovieSelect}
       />
     );
   }

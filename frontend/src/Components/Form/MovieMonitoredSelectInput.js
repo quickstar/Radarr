@@ -1,16 +1,19 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import monitorOptions from 'Utilities/Series/monitorOptions';
 import SelectInput from './SelectInput';
 
-function MonitorEpisodesSelectInput(props) {
+const monitorTypesOptions = [
+  { key: 'true', value: 'True' },
+  { key: 'false', value: 'False' }
+];
+
+function MovieMonitoredSelectInput(props) {
+  const values = [...monitorTypesOptions];
+
   const {
     includeNoChange,
-    includeMixed,
-    ...otherProps
+    includeMixed
   } = props;
-
-  const values = [...monitorOptions];
 
   if (includeNoChange) {
     values.unshift({
@@ -30,21 +33,20 @@ function MonitorEpisodesSelectInput(props) {
 
   return (
     <SelectInput
+      {...props}
       values={values}
-      {...otherProps}
     />
   );
 }
 
-MonitorEpisodesSelectInput.propTypes = {
+MovieMonitoredSelectInput.propTypes = {
   includeNoChange: PropTypes.bool.isRequired,
-  includeMixed: PropTypes.bool.isRequired,
-  onChange: PropTypes.func.isRequired
+  includeMixed: PropTypes.bool.isRequired
 };
 
-MonitorEpisodesSelectInput.defaultProps = {
+MovieMonitoredSelectInput.defaultProps = {
   includeNoChange: false,
   includeMixed: false
 };
 
-export default MonitorEpisodesSelectInput;
+export default MovieMonitoredSelectInput;

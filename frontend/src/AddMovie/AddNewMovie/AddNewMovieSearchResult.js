@@ -18,12 +18,12 @@ class AddNewMovieSearchResult extends Component {
     super(props, context);
 
     this.state = {
-      isNewAddSeriesModalOpen: false
+      isNewAddMovieModalOpen: false
     };
   }
 
   componentDidUpdate(prevProps) {
-    if (!prevProps.isExistingSeries && this.props.isExistingSeries) {
+    if (!prevProps.isExistingMovie && this.props.isExistingMovie) {
       this.onAddSerisModalClose();
     }
   }
@@ -32,11 +32,11 @@ class AddNewMovieSearchResult extends Component {
   // Listeners
 
   onPress = () => {
-    this.setState({ isNewAddSeriesModalOpen: true });
+    this.setState({ isNewAddMovieModalOpen: true });
   }
 
   onAddSerisModalClose = () => {
-    this.setState({ isNewAddSeriesModalOpen: false });
+    this.setState({ isNewAddMovieModalOpen: false });
   }
 
   //
@@ -53,14 +53,14 @@ class AddNewMovieSearchResult extends Component {
       overview,
       ratings,
       images,
-      isExistingSeries,
+      isExistingMovie,
       isSmallScreen
     } = this.props;
     const {
-      isNewAddSeriesModalOpen
+      isNewAddMovieModalOpen
     } = this.state;
 
-    const linkProps = isExistingSeries ? { to: `/movie/${titleSlug}` } : { onPress: this.onPress };
+    const linkProps = isExistingMovie ? { to: `/movie/${titleSlug}` } : { onPress: this.onPress };
 
     return (
       <div>
@@ -87,7 +87,7 @@ class AddNewMovieSearchResult extends Component {
               }
 
               {
-                isExistingSeries &&
+                isExistingMovie &&
                 <Icon
                   className={styles.alreadyExistsIcon}
                   name={icons.CHECK_CIRCLE}
@@ -130,7 +130,7 @@ class AddNewMovieSearchResult extends Component {
         </Link>
 
         <AddNewMovieModal
-          isOpen={isNewAddSeriesModalOpen && !isExistingSeries}
+          isOpen={isNewAddMovieModalOpen && !isExistingMovie}
           tmdbId={tmdbId}
           title={title}
           year={year}
@@ -151,10 +151,9 @@ AddNewMovieSearchResult.propTypes = {
   studio: PropTypes.string,
   status: PropTypes.string.isRequired,
   overview: PropTypes.string,
-  statistics: PropTypes.object.isRequired,
   ratings: PropTypes.object.isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
-  isExistingSeries: PropTypes.bool.isRequired,
+  isExistingMovie: PropTypes.bool.isRequired,
   isSmallScreen: PropTypes.bool.isRequired
 };
 

@@ -201,27 +201,6 @@ class CalendarHeader extends Component {
                   />
 
                   <CalendarHeaderViewButton
-                    view={calendarViews.WEEK}
-                    selectedView={view}
-                    buttonGroupPosition={align.CENTER}
-                    onPress={this.onViewChange}
-                  />
-
-                  <CalendarHeaderViewButton
-                    view={calendarViews.FORECAST}
-                    selectedView={view}
-                    buttonGroupPosition={align.CENTER}
-                    onPress={this.onViewChange}
-                  />
-
-                  <CalendarHeaderViewButton
-                    view={calendarViews.DAY}
-                    selectedView={view}
-                    buttonGroupPosition={align.CENTER}
-                    onPress={this.onViewChange}
-                  />
-
-                  <CalendarHeaderViewButton
                     view={calendarViews.AGENDA}
                     selectedView={view}
                     buttonGroupPosition={align.RIGHT}

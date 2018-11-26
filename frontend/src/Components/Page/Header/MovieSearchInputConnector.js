@@ -26,12 +26,12 @@ function createCleanTagsSelector() {
   );
 }
 
-function createCleanSeriesSelector() {
+function createCleanMovieSelector() {
   return createSelector(
     createAllMoviesSelector(),
     createCleanTagsSelector(),
-    (allSeries, allTags) => {
-      return allSeries.map((series) => {
+    (allMovies, allTags) => {
+      return allMovies.map((movie) => {
         const {
           title,
           titleSlug,
@@ -39,7 +39,7 @@ function createCleanSeriesSelector() {
           images,
           alternateTitles = [],
           tags = []
-        } = series;
+        } = movie;
 
         return {
           title,
@@ -73,10 +73,10 @@ function createCleanSeriesSelector() {
 
 function createMapStateToProps() {
   return createSelector(
-    createCleanSeriesSelector(),
-    (series) => {
+    createCleanMovieSelector(),
+    (movie) => {
       return {
-        series
+        movie
       };
     }
   );
@@ -84,7 +84,7 @@ function createMapStateToProps() {
 
 function createMapDispatchToProps(dispatch, props) {
   return {
-    onGoToSeries(titleSlug) {
+    onGoToMovie(titleSlug) {
       dispatch(push(`${window.Radarr.urlBase}/movie/${titleSlug}`));
     },
 

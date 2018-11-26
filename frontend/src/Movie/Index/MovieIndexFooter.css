@@ -24,6 +24,12 @@
   background-color: $primaryColor;
 }
 
+.availNotMonitored {
+  composes: legendItemColor;
+
+  background-color: $darkGray;
+}
+
 .ended {
   composes: legendItemColor;
 

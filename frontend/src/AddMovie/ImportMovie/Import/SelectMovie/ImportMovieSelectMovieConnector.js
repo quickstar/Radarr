@@ -3,17 +3,17 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { queueLookupSeries, setImportMovieValue } from 'Store/Actions/importMovieActions';
+import { queueLookupMovie, setImportMovieValue } from 'Store/Actions/importMovieActions';
 import createImportMovieItemSelector from 'Store/Selectors/createImportMovieItemSelector';
 import ImportMovieSelectMovie from './ImportMovieSelectMovie';
 
 function createMapStateToProps() {
   return createSelector(
-    (state) => state.importMovie.isLookingUpSeries,
+    (state) => state.importMovie.isLookingUpMovie,
     createImportMovieItemSelector(),
-    (isLookingUpSeries, item) => {
+    (isLookingUpMovie, item) => {
       return {
-        isLookingUpSeries,
+        isLookingUpMovie,
         ...item
       };
     }
@@ -21,7 +21,7 @@ function createMapStateToProps() {
 }
 
 const mapDispatchToProps = {
-  queueLookupSeries,
+  queueLookupMovie,
   setImportMovieValue
 };
 
@@ -31,14 +31,14 @@ class ImportMovieSelectMovieConnector extends Component {
   // Listeners
 
   onSearchInputChange = (term) => {
-    this.props.queueLookupSeries({
+    this.props.queueLookupMovie({
       name: this.props.id,
       term,
       topOfQueue: true
     });
   }
 
-  onSeriesSelect = (tvdbId) => {
+  onMovieSelect = (tmdbId) => {
     const {
       id,
       items
@@ -46,7 +46,7 @@ class ImportMovieSelectMovieConnector extends Component {
 
     this.props.setImportMovieValue({
       id,
-      selectedSeries: _.find(items, { tvdbId })
+      selectedMovie: _.find(items, { tmdbId })
     });
   }
 
@@ -58,7 +58,7 @@ class ImportMovieSelectMovieConnector extends Component {
       <ImportMovieSelectMovie
         {...this.props}
         onSearchInputChange={this.onSearchInputChange}
-        onSeriesSelect={this.onSeriesSelect}
+        onMovieSelect={this.onMovieSelect}
       />
     );
   }
@@ -67,9 +67,9 @@ class ImportMovieSelectMovieConnector extends Component {
 ImportMovieSelectMovieConnector.propTypes = {
   id: PropTypes.string.isRequired,
   items: PropTypes.arrayOf(PropTypes.object),
-  selectedSeries: PropTypes.object,
+  selectedMovie: PropTypes.object,
   isSelected: PropTypes.bool,
-  queueLookupSeries: PropTypes.func.isRequired,
+  queueLookupMovie: PropTypes.func.isRequired,
   setImportMovieValue: PropTypes.func.isRequired
 };
 

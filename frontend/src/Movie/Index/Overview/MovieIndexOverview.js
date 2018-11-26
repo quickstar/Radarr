@@ -75,10 +75,9 @@ class MovieIndexOverview extends Component {
       title,
       overview,
       monitored,
+      hasFile,
       status,
       titleSlug,
-      nextAiring,
-      statistics,
       images,
       posterWidth,
       posterHeight,
@@ -97,13 +96,6 @@ class MovieIndexOverview extends Component {
       onSearchPress,
       ...otherProps
     } = this.props;
-
-    const {
-      seasonCount,
-      episodeCount,
-      episodeFileCount,
-      totalEpisodeCount
-    } = statistics;
 
     const {
       isEditMovieModalOpen,
@@ -151,10 +143,8 @@ class MovieIndexOverview extends Component {
 
             <MovieIndexProgressBar
               monitored={monitored}
+              hasFile={hasFile}
               status={status}
-              episodeCount={episodeCount}
-              episodeFileCount={episodeFileCount}
-              totalEpisodeCount={totalEpisodeCount}
               posterWidth={posterWidth}
               detailedProgressBar={overviewOptions.detailedProgressBar}
             />
@@ -182,7 +172,7 @@ class MovieIndexOverview extends Component {
                     <SpinnerIconButton
                       className={styles.action}
                       name={icons.SEARCH}
-                      title="Search for monitored episodes"
+                      title="Search for movie"
                       isSpinning={isSearchingMovie}
                       onPress={onSearchPress}
                     />
@@ -190,7 +180,7 @@ class MovieIndexOverview extends Component {
 
                 <IconButton
                   name={icons.EDIT}
-                  title="Edit Series"
+                  title="Edit Movie"
                   onPress={this.onEditMoviePress}
                 />
               </div>
@@ -210,8 +200,6 @@ class MovieIndexOverview extends Component {
               <MovieIndexOverviewInfo
                 height={overviewHeight}
                 monitored={monitored}
-                nextAiring={nextAiring}
-                seasonCount={seasonCount}
                 qualityProfile={qualityProfile}
                 showRelativeDates={showRelativeDates}
                 shortDateFormat={shortDateFormat}
@@ -247,10 +235,9 @@ MovieIndexOverview.propTypes = {
   title: PropTypes.string.isRequired,
   overview: PropTypes.string.isRequired,
   monitored: PropTypes.bool.isRequired,
+  hasFile: PropTypes.bool.isRequired,
   status: PropTypes.string.isRequired,
   titleSlug: PropTypes.string.isRequired,
-  nextAiring: PropTypes.string,
-  statistics: PropTypes.object.isRequired,
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
   posterWidth: PropTypes.number.isRequired,
   posterHeight: PropTypes.number.isRequired,
@@ -266,15 +253,6 @@ MovieIndexOverview.propTypes = {
   isRefreshingMovie: PropTypes.bool.isRequired,
   isSearchingMovie: PropTypes.bool.isRequired,
   onRefreshMoviePress: PropTypes.func.isRequired
-};
-
-MovieIndexOverview.defaultProps = {
-  statistics: {
-    seasonCount: 0,
-    episodeCount: 0,
-    episodeFileCount: 0,
-    totalEpisodeCount: 0
-  }
 };
 
 export default MovieIndexOverview;

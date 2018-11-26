@@ -103,10 +103,10 @@ class ImportMovieSelectMovie extends Component {
     this.props.onSearchInputChange(this.state.term);
   }
 
-  onSeriesSelect = (tvdbId) => {
+  onMovieSelect = (tmdbId) => {
     this.setState({ isOpen: false });
 
-    this.props.onSeriesSelect(tvdbId);
+    this.props.onMovieSelect(tmdbId);
   }
 
   //
@@ -114,14 +114,14 @@ class ImportMovieSelectMovie extends Component {
 
   render() {
     const {
-      selectedSeries,
-      isExistingSeries,
+      selectedMovie,
+      isExistingMovie,
       isFetching,
       isPopulated,
       error,
       items,
       queued,
-      isLookingUpSeries
+      isLookingUpMovie
     } = this.props;
 
     const errorMessage = error &&
@@ -142,7 +142,7 @@ class ImportMovieSelectMovie extends Component {
           onPress={this.onPress}
         >
           {
-            isLookingUpSeries && queued && !isPopulated &&
+            isLookingUpMovie && queued && !isPopulated &&
               <LoadingIndicator
                 className={styles.loading}
                 size={20}
@@ -150,7 +150,7 @@ class ImportMovieSelectMovie extends Component {
           }
 
           {
-            isPopulated && selectedSeries && isExistingSeries &&
+            isPopulated && selectedMovie && isExistingMovie &&
               <Icon
                 className={styles.warningIcon}
                 name={icons.WARNING}
@@ -159,17 +159,17 @@ class ImportMovieSelectMovie extends Component {
           }
 
           {
-            isPopulated && selectedSeries &&
+            isPopulated && selectedMovie &&
               <ImportMovieTitle
-                title={selectedSeries.title}
-                year={selectedSeries.year}
-                network={selectedSeries.network}
-                isExistingSeries={isExistingSeries}
+                title={selectedMovie.title}
+                year={selectedMovie.year}
+                network={selectedMovie.network}
+                isExistingMovie={isExistingMovie}
               />
           }
 
           {
-            isPopulated && !selectedSeries &&
+            isPopulated && !selectedMovie &&
               <div>
                 <Icon
                   className={styles.warningIcon}
@@ -237,12 +237,12 @@ class ImportMovieSelectMovie extends Component {
                     items.map((item) => {
                       return (
                         <ImportMovieSearchResultConnector
-                          key={item.tvdbId}
-                          tvdbId={item.tvdbId}
+                          key={item.tmdbId}
+                          tmdbId={item.tmdbId}
                           title={item.title}
                           year={item.year}
-                          network={item.network}
-                          onPress={this.onSeriesSelect}
+                          studio={item.studio}
+                          onPress={this.onMovieSelect}
                         />
                       );
                     })
@@ -258,16 +258,16 @@ class ImportMovieSelectMovie extends Component {
 
 ImportMovieSelectMovie.propTypes = {
   id: PropTypes.string.isRequired,
-  selectedSeries: PropTypes.object,
-  isExistingSeries: PropTypes.bool.isRequired,
+  selectedMovie: PropTypes.object,
+  isExistingMovie: PropTypes.bool.isRequired,
   isFetching: PropTypes.bool.isRequired,
   isPopulated: PropTypes.bool.isRequired,
   error: PropTypes.object,
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   queued: PropTypes.bool.isRequired,
-  isLookingUpSeries: PropTypes.bool.isRequired,
+  isLookingUpMovie: PropTypes.bool.isRequired,
   onSearchInputChange: PropTypes.func.isRequired,
-  onSeriesSelect: PropTypes.func.isRequired
+  onMovieSelect: PropTypes.func.isRequired
 };
 
 ImportMovieSelectMovie.defaultProps = {

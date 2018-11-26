@@ -177,24 +177,14 @@ class SignalRConnector extends Component {
     }
   }
 
-  handleEpisode = (body) => {
-    if (body.action === 'updated') {
-      this.props.dispatchUpdateItem({
-        section: 'episodes',
-        updateOnly: true,
-        ...body.resource
-      });
-    }
-  }
-
-  handleEpisodefile = (body) => {
-    const section = 'episodeFiles';
+  handleMoviefile = (body) => {
+    const section = 'movieFiles';
 
     if (body.action === 'updated') {
       this.props.dispatchUpdateItem({ section, ...body.resource });
 
       // Repopulate the page to handle recently imported file
-      repopulatePage('episodeFileUpdated');
+      repopulatePage('movieFileUpdated');
     } else if (body.action === 'deleted') {
       this.props.dispatchRemoveItem({ section, id: body.resource.id });
     }
@@ -233,26 +223,6 @@ class SignalRConnector extends Component {
     const version = body.Version;
 
     this.props.dispatchSetVersion({ version });
-  }
-
-  handleWantedCutoff = (body) => {
-    if (body.action === 'updated') {
-      this.props.dispatchUpdateItem({
-        section: 'cutoffUnmet',
-        updateOnly: true,
-        ...body.resource
-      });
-    }
-  }
-
-  handleWantedMissing = (body) => {
-    if (body.action === 'updated') {
-      this.props.dispatchUpdateItem({
-        section: 'missing',
-        updateOnly: true,
-        ...body.resource
-      });
-    }
   }
 
   handleSystemTask = () => {

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { queueLookupSeries, setImportMovieValue } from 'Store/Actions/importMovieActions';
+import { queueLookupMovie, setImportMovieValue } from 'Store/Actions/importMovieActions';
 import createAllMoviesSelector from 'Store/Selectors/createAllMoviesSelector';
 import ImportMovieRow from './ImportMovieRow';
 
@@ -21,20 +21,20 @@ function createMapStateToProps() {
   return createSelector(
     createImportMovieItemSelector(),
     createAllMoviesSelector(),
-    (item, series) => {
-      const selectedSeries = item && item.selectedSeries;
-      const isExistingSeries = !!selectedSeries && _.some(series, { tvdbId: selectedSeries.tvdbId });
+    (item, movies) => {
+      const selectedMovie = item && item.selectedMovie;
+      const isExistingMovie = !!selectedMovie && _.some(movies, { tmdbId: selectedMovie.tmdbId });
 
       return {
         ...item,
-        isExistingSeries
+        isExistingMovie
       };
     }
   );
 }
 
 const mapDispatchToProps = {
-  queueLookupSeries,
+  queueLookupMovie,
   setImportMovieValue
 };
 
@@ -69,7 +69,7 @@ class ImportMovieRowConnector extends Component {
       <ImportMovieRow
         {...this.props}
         onInputChange={this.onInputChange}
-        onSeriesSelect={this.onSeriesSelect}
+        onMovieSelect={this.onMovieSelect}
       />
     );
   }
@@ -80,7 +80,7 @@ ImportMovieRowConnector.propTypes = {
   id: PropTypes.string.isRequired,
   monitor: PropTypes.string,
   items: PropTypes.arrayOf(PropTypes.object),
-  queueLookupSeries: PropTypes.func.isRequired,
+  queueLookupMovie: PropTypes.func.isRequired,
   setImportMovieValue: PropTypes.func.isRequired
 };
 

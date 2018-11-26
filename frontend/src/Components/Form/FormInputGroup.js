@@ -5,13 +5,13 @@ import Link from 'Components/Link/Link';
 import CaptchaInputConnector from './CaptchaInputConnector';
 import CheckInput from './CheckInput';
 import DeviceInputConnector from './DeviceInputConnector';
-import MonitorEpisodesSelectInput from './MonitorEpisodesSelectInput';
 import NumberInput from './NumberInput';
 import OAuthInputConnector from './OAuthInputConnector';
 import PasswordInput from './PasswordInput';
 import PathInputConnector from './PathInputConnector';
 import QualityProfileSelectInputConnector from './QualityProfileSelectInputConnector';
 import RootFolderSelectInputConnector from './RootFolderSelectInputConnector';
+import MovieMonitoredSelectInput from './MovieMonitoredSelectInput';
 import SelectInput from './SelectInput';
 import TagInputConnector from './TagInputConnector';
 import TextTagInputConnector from './TextTagInputConnector';
@@ -30,9 +30,6 @@ function getComponent(type) {
     case inputTypes.DEVICE:
       return DeviceInputConnector;
 
-    case inputTypes.MONITOR_EPISODES_SELECT:
-      return MonitorEpisodesSelectInput;
-
     case inputTypes.NUMBER:
       return NumberInput;
 
@@ -47,6 +44,9 @@ function getComponent(type) {
 
     case inputTypes.QUALITY_PROFILE_SELECT:
       return QualityProfileSelectInputConnector;
+
+    case inputTypes.MOVIE_MONITORED_SELECT:
+      return MovieMonitoredSelectInput;
 
     case inputTypes.ROOT_FOLDER_SELECT:
       return RootFolderSelectInputConnector;

@@ -65,9 +65,7 @@ function calculateRowHeight(posterHeight, sortKey, isSmallScreen, posterOptions)
   }
 
   switch (sortKey) {
-    case 'network':
-    case 'seasons':
-    case 'previousAiring':
+    case 'studio':
     case 'added':
     case 'path':
     case 'sizeOnDisk':

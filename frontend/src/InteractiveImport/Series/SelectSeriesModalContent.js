@@ -37,7 +37,7 @@ class SelectSeriesModalContent extends Component {
   render() {
     const {
       items,
-      onSeriesSelect,
+      onMovieSelect,
       onModalClose
     } = this.props;
 
@@ -71,7 +71,7 @@ class SelectSeriesModalContent extends Component {
                       key={item.id}
                       id={item.id}
                       title={item.title}
-                      onSeriesSelect={onSeriesSelect}
+                      onMovieSelect={onMovieSelect}
                     />
                   ) :
                   null;
@@ -92,7 +92,7 @@ class SelectSeriesModalContent extends Component {
 
 SelectSeriesModalContent.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onSeriesSelect: PropTypes.func.isRequired,
+  onMovieSelect: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };
 

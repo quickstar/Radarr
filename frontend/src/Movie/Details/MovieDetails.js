@@ -5,7 +5,7 @@ import TextTruncate from 'react-text-truncate';
 import formatBytes from 'Utilities/Number/formatBytes';
 import selectAll from 'Utilities/Table/selectAll';
 import toggleSelected from 'Utilities/Table/toggleSelected';
-import { align, icons, kinds, sizes, tooltipPositions } from 'Helpers/Props';
+import { icons, kinds, sizes, tooltipPositions } from 'Helpers/Props';
 import fonts from 'Styles/Variables/fonts';
 import HeartRating from 'Components/HeartRating';
 import Icon from 'Components/Icon';
@@ -169,10 +169,9 @@ class MovieDetails extends Component {
       runtime,
       ratings,
       path,
-      statistics,
+      sizeOnDisk,
       qualityProfileId,
       monitored,
-      status,
       studio,
       overview,
       images,
@@ -193,39 +192,14 @@ class MovieDetails extends Component {
     } = this.props;
 
     const {
-      episodeFileCount,
-      sizeOnDisk
-    } = statistics;
-
-    const {
       isOrganizeModalOpen,
       isManageEpisodesOpen,
       isEditMovieModalOpen,
       isDeleteMovieModalOpen,
       isMovieHistoryModalOpen,
       isInteractiveImportModalOpen,
-      allExpanded,
-      allCollapsed,
       overviewHeight
     } = this.state;
-
-    const continuing = status === 'continuing';
-
-    let episodeFilesCountMessage = 'No episode files';
-
-    if (episodeFileCount === 1) {
-      episodeFilesCountMessage = '1 episode file';
-    } else if (episodeFileCount > 1) {
-      episodeFilesCountMessage = `${episodeFileCount} episode files`;
-    }
-
-    let expandIcon = icons.EXPAND_INDETERMINATE;
-
-    if (allExpanded) {
-      expandIcon = icons.COLLAPSE;
-    } else if (allCollapsed) {
-      expandIcon = icons.EXPAND;
-    }
 
     return (
       <PageContent title={title}>
@@ -283,14 +257,6 @@ class MovieDetails extends Component {
               label="Delete"
               iconName={icons.DELETE}
               onPress={this.onDeleteMoviePress}
-            />
-          </PageToolbarSection>
-
-          <PageToolbarSection alignContent={align.RIGHT}>
-            <PageToolbarButton
-              label={allExpanded ? 'Collapse All' : 'Expand All'}
-              iconName={expandIcon}
-              onPress={this.onExpandAllPress}
             />
           </PageToolbarSection>
         </PageToolbar>
@@ -401,7 +367,6 @@ class MovieDetails extends Component {
 
                   <Label
                     className={styles.detailsLabel}
-                    title={episodeFilesCountMessage}
                     size={sizes.LARGE}
                   >
                     <Icon
@@ -449,21 +414,6 @@ class MovieDetails extends Component {
                     </span>
                   </Label>
 
-                  <Label
-                    className={styles.detailsLabel}
-                    title={continuing ? 'More episodes/another season is expected' : 'No additional episodes or or another season is expected'}
-                    size={sizes.LARGE}
-                  >
-                    <Icon
-                      name={continuing ? icons.SERIES_CONTINUING : icons.SERIES_ENDED}
-                      size={17}
-                    />
-
-                    <span className={styles.qualityProfileName}>
-                      {continuing ? 'Continuing' : 'Ended'}
-                    </span>
-                  </Label>
-
                   {
                     !!studio &&
                       <Label
@@ -472,7 +422,7 @@ class MovieDetails extends Component {
                         size={sizes.LARGE}
                       >
                         <Icon
-                          name={icons.NETWORK}
+                          name={icons.STUDIO}
                           size={17}
                         />
 
@@ -612,7 +562,7 @@ MovieDetails.propTypes = {
   runtime: PropTypes.number.isRequired,
   ratings: PropTypes.object.isRequired,
   path: PropTypes.string.isRequired,
-  statistics: PropTypes.object.isRequired,
+  sizeOnDisk: PropTypes.number.isRequired,
   qualityProfileId: PropTypes.number.isRequired,
   monitored: PropTypes.bool.isRequired,
   status: PropTypes.string.isRequired,
@@ -636,7 +586,6 @@ MovieDetails.propTypes = {
 };
 
 MovieDetails.defaultProps = {
-  statistics: {},
   tag: [],
   isSaving: false
 };

@@ -10,7 +10,7 @@ class ImportMovieSearchResult extends Component {
   // Listeners
 
   onPress = () => {
-    this.props.onPress(this.props.tvdbId);
+    this.props.onPress(this.props.tmdbId);
   }
 
   //
@@ -20,8 +20,8 @@ class ImportMovieSearchResult extends Component {
     const {
       title,
       year,
-      network,
-      isExistingSeries
+      studio,
+      isExistingMovie
     } = this.props;
 
     return (
@@ -32,8 +32,8 @@ class ImportMovieSearchResult extends Component {
         <ImportMovieTitle
           title={title}
           year={year}
-          network={network}
-          isExistingSeries={isExistingSeries}
+          network={studio}
+          isExistingMovie={isExistingMovie}
         />
       </Link>
     );
@@ -41,11 +41,11 @@ class ImportMovieSearchResult extends Component {
 }
 
 ImportMovieSearchResult.propTypes = {
-  tvdbId: PropTypes.number.isRequired,
+  tmdbId: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,
-  network: PropTypes.string,
-  isExistingSeries: PropTypes.bool.isRequired,
+  studio: PropTypes.string,
+  isExistingMovie: PropTypes.bool.isRequired,
   onPress: PropTypes.func.isRequired
 };
 

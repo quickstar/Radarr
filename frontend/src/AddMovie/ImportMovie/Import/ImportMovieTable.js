@@ -15,7 +15,7 @@ class ImportMovieTable extends Component {
       unmappedFolders,
       defaultMonitor,
       defaultQualityProfileId,
-      onSeriesLookup,
+      onMovieLookup,
       onSetImportMovieValue
     } = this.props;
 
@@ -27,7 +27,7 @@ class ImportMovieTable extends Component {
     unmappedFolders.forEach((unmappedFolder) => {
       const id = unmappedFolder.name;
 
-      onSeriesLookup(id, unmappedFolder.path);
+      onMovieLookup(id, unmappedFolder.path);
 
       onSetImportMovieValue({
         id,
@@ -60,15 +60,15 @@ class ImportMovieTable extends Component {
         return;
       }
 
-      const selectedSeries = item.selectedSeries;
+      const selectedMovie = item.selectedMovie;
       const isSelected = selectedState[id];
 
-      const isExistingSeries = !!selectedSeries &&
-        _.some(prevProps.allSeries, { tvdbId: selectedSeries.tvdbId });
+      const isExistingMovie = !!selectedMovie &&
+        _.some(prevProps.allMovies, { tmdbId: selectedMovie.tmdbId });
 
       // Props doesn't have a selected series or
       // the selected series is an existing series.
-      if ((!selectedSeries && prevItem.selectedSeries) || (isExistingSeries && !prevItem.selectedSeries)) {
+      if ((!selectedMovie && prevItem.selectedMovie) || (isExistingMovie && !prevItem.selectedMovie)) {
         onSelectedChange({ id, value: false });
 
         return;
@@ -76,14 +76,14 @@ class ImportMovieTable extends Component {
 
       // State is selected, but a series isn't selected or
       // the selected series is an existing series.
-      if (isSelected && (!selectedSeries || isExistingSeries)) {
+      if (isSelected && (!selectedMovie || isExistingMovie)) {
         onSelectedChange({ id, value: false });
 
         return;
       }
 
       // A series is being selected that wasn't previously selected.
-      if (selectedSeries && selectedSeries !== prevItem.selectedSeries) {
+      if (selectedMovie && selectedMovie !== prevItem.selectedMovie) {
         onSelectedChange({ id, value: true });
 
         return;
@@ -169,13 +169,13 @@ ImportMovieTable.propTypes = {
   allUnselected: PropTypes.bool.isRequired,
   selectedState: PropTypes.object.isRequired,
   isSmallScreen: PropTypes.bool.isRequired,
-  allSeries: PropTypes.arrayOf(PropTypes.object),
+  allMovies: PropTypes.arrayOf(PropTypes.object),
   contentBody: PropTypes.object.isRequired,
   scrollTop: PropTypes.number.isRequired,
   onSelectAllChange: PropTypes.func.isRequired,
   onSelectedChange: PropTypes.func.isRequired,
   onRemoveSelectedStateItem: PropTypes.func.isRequired,
-  onSeriesLookup: PropTypes.func.isRequired,
+  onMovieLookup: PropTypes.func.isRequired,
   onSetImportMovieValue: PropTypes.func.isRequired,
   onScroll: PropTypes.func.isRequired
 };

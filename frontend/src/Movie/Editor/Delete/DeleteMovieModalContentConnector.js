@@ -9,12 +9,12 @@ function createMapStateToProps() {
   return createSelector(
     (state, { seriesIds }) => seriesIds,
     createAllMoviesSelector(),
-    (seriesIds, allSeries) => {
-      const selectedSeries = _.intersectionWith(allSeries, seriesIds, (s, id) => {
+    (seriesIds, allMovies) => {
+      const selectedMovie = _.intersectionWith(allMovies, seriesIds, (s, id) => {
         return s.id === id;
       });
 
-      const sortedSeries = _.orderBy(selectedSeries, 'sortTitle');
+      const sortedSeries = _.orderBy(selectedMovie, 'sortTitle');
       const series = _.map(sortedSeries, (s) => {
         return {
           title: s.title,

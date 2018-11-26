@@ -46,33 +46,37 @@ export const filters = [
     ]
   },
   {
-    key: 'continuing',
-    label: 'Continuing Only',
+    key: 'wanted',
+    label: 'Wanted Missing',
     filters: [
       {
-        key: 'status',
-        value: 'continuing',
+        key: 'monitored',
+        value: true,
+        type: filterTypes.EQUAL
+      },
+      {
+        key: 'hasFile',
+        value: false,
         type: filterTypes.EQUAL
       }
     ]
   },
   {
-    key: 'ended',
-    label: 'Ended Only',
+    key: 'cutoffunmet',
+    label: 'Cut-off Unmet',
     filters: [
       {
-        key: 'status',
-        value: 'ended',
+        key: 'monitored',
+        value: true,
         type: filterTypes.EQUAL
-      }
-    ]
-  },
-  {
-    key: 'missing',
-    label: 'Missing Episodes',
-    filters: [
+      },
       {
-        key: 'missing',
+        key: 'hasFile',
+        value: true,
+        type: filterTypes.EQUAL
+      },
+      {
+        key: 'movieFile.qualityCutoffNotMet',
         value: true,
         type: filterTypes.EQUAL
       }
@@ -95,13 +99,6 @@ export const filterPredicates = {
     const predicate = filterTypePredicates[type];
 
     return predicate(item.ratings.value * 10, filterValue);
-  },
-
-  sizeOnDisk: function(item, filterValue, type) {
-    const predicate = filterTypePredicates[type];
-    const sizeOnDisk = item.statistics ? item.statistics.sizeOnDisk : 0;
-
-    return predicate(sizeOnDisk, filterValue);
   }
 };
 

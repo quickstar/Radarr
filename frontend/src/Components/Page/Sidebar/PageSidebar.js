@@ -39,10 +39,6 @@ const links = [
       {
         title: 'Lists',
         to: '/add/lists'
-      },
-      {
-        title: 'Mass Editor',
-        to: '/movieeditor'
       }
     ]
   },

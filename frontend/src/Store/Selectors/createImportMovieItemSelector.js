@@ -10,14 +10,14 @@ function createImportMovieItemSelector() {
     createAllMoviesSelector(),
     (id, addMovie, importMovie, series) => {
       const item = _.find(importMovie.items, { id }) || {};
-      const selectedSeries = item && item.selectedSeries;
-      const isExistingSeries = !!selectedSeries && _.some(series, { tvdbId: selectedSeries.tvdbId });
+      const selectedMovie = item && item.selectedMovie;
+      const isExistingMovie = !!selectedMovie && _.some(series, { tvdbId: selectedMovie.tvdbId });
 
       return {
         defaultMonitor: addMovie.defaults.monitor,
         defaultQualityProfileId: addMovie.defaults.qualityProfileId,
         ...item,
-        isExistingSeries
+        isExistingMovie
       };
     }
   );

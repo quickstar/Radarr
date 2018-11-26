@@ -27,7 +27,7 @@ class MoviePoster extends Component {
   constructor(props, context) {
     super(props, context);
 
-    const pixelRatio = Math.floor(window.devicePixelRatio);
+    const pixelRatio = Math.ceil(window.devicePixelRatio);
 
     const {
       images,

@@ -8,9 +8,9 @@ function createMapStateToProps() {
   return createSelector(
     createExistingMovieSelector(),
     createDimensionsSelector(),
-    (isExistingSeries, dimensions) => {
+    (isExistingMovie, dimensions) => {
       return {
-        isExistingSeries,
+        isExistingMovie,
         isSmallScreen: dimensions.isSmallScreen
       };
     }

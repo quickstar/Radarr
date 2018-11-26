@@ -78,7 +78,7 @@ class ImportMovieFooter extends Component {
     const {
       selectedCount,
       isImporting,
-      isLookingUpSeries,
+      isLookingUpMovie,
       isMonitorMixed,
       isQualityProfileIdMixed,
       onImportPress,
@@ -98,7 +98,7 @@ class ImportMovieFooter extends Component {
           </div>
 
           <FormInputGroup
-            type={inputTypes.MONITOR_EPISODES_SELECT}
+            type={inputTypes.MOVIE_MONITORED_SELECT}
             name="monitor"
             value={monitor}
             isDisabled={!selectedCount}
@@ -132,14 +132,14 @@ class ImportMovieFooter extends Component {
               className={styles.importButton}
               kind={kinds.PRIMARY}
               isSpinning={isImporting}
-              isDisabled={!selectedCount || isLookingUpSeries}
+              isDisabled={!selectedCount || isLookingUpMovie}
               onPress={onImportPress}
             >
               Import {selectedCount} {selectedCount > 1 ? 'Movies' : 'Movie'}
             </SpinnerButton>
 
             {
-              isLookingUpSeries &&
+              isLookingUpMovie &&
                 <Button
                   className={styles.loadingButton}
                   kind={kinds.WARNING}
@@ -150,7 +150,7 @@ class ImportMovieFooter extends Component {
             }
 
             {
-              isLookingUpSeries &&
+              isLookingUpMovie &&
                 <LoadingIndicator
                   className={styles.loading}
                   size={24}
@@ -158,7 +158,7 @@ class ImportMovieFooter extends Component {
             }
 
             {
-              isLookingUpSeries &&
+              isLookingUpMovie &&
                 'Processing Folders'
             }
           </div>
@@ -171,7 +171,7 @@ class ImportMovieFooter extends Component {
 ImportMovieFooter.propTypes = {
   selectedCount: PropTypes.number.isRequired,
   isImporting: PropTypes.bool.isRequired,
-  isLookingUpSeries: PropTypes.bool.isRequired,
+  isLookingUpMovie: PropTypes.bool.isRequired,
   defaultMonitor: PropTypes.string.isRequired,
   defaultQualityProfileId: PropTypes.number,
   isMonitorMixed: PropTypes.bool.isRequired,

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
-import { queueLookupSeries, setImportMovieValue } from 'Store/Actions/importMovieActions';
+import { queueLookupMovie, setImportMovieValue } from 'Store/Actions/importMovieActions';
 import createAllMoviesSelector from 'Store/Selectors/createAllMoviesSelector';
 import ImportMovieTable from './ImportMovieTable';
 
@@ -10,13 +10,13 @@ function createMapStateToProps() {
     (state) => state.importMovie,
     (state) => state.app.dimensions,
     createAllMoviesSelector(),
-    (addMovie, importMovie, dimensions, allSeries) => {
+    (addMovie, importMovie, dimensions, allMovies) => {
       return {
         defaultMonitor: addMovie.defaults.monitor,
         defaultQualityProfileId: addMovie.defaults.qualityProfileId,
         items: importMovie.items,
         isSmallScreen: dimensions.isSmallScreen,
-        allSeries
+        allMovies
       };
     }
   );
@@ -24,8 +24,8 @@ function createMapStateToProps() {
 
 function createMapDispatchToProps(dispatch, props) {
   return {
-    onSeriesLookup(name, path) {
-      dispatch(queueLookupSeries({
+    onMovieLookup(name, path) {
+      dispatch(queueLookupMovie({
         name,
         path,
         term: name

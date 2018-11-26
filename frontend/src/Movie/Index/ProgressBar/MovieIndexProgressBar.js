@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import getProgressBarKind from 'Utilities/Series/getProgressBarKind';
+import getProgressBarKind from 'Utilities/Movie/getProgressBarKind';
 import { sizes } from 'Helpers/Props';
 import ProgressBar from 'Components/ProgressBar';
 import styles from './MovieIndexProgressBar.css';
@@ -9,26 +9,21 @@ function MovieIndexProgressBar(props) {
   const {
     monitored,
     status,
-    episodeCount,
-    episodeFileCount,
-    totalEpisodeCount,
+    hasFile,
     posterWidth,
     detailedProgressBar
   } = props;
 
-  const progress = episodeCount ? episodeFileCount / episodeCount * 100 : 100;
-  const text = `${episodeFileCount} / ${episodeCount}`;
+  const progress = 100;
 
   return (
     <ProgressBar
       className={styles.progressBar}
       containerClassName={styles.progress}
       progress={progress}
-      kind={getProgressBarKind(status, monitored, progress)}
+      kind={getProgressBarKind(status, monitored, hasFile)}
       size={detailedProgressBar ? sizes.MEDIUM : sizes.SMALL}
       showText={detailedProgressBar}
-      text={text}
-      title={`${episodeFileCount} / ${episodeCount} (Total: ${totalEpisodeCount})`}
       width={posterWidth}
     />
   );
@@ -36,10 +31,8 @@ function MovieIndexProgressBar(props) {
 
 MovieIndexProgressBar.propTypes = {
   monitored: PropTypes.bool.isRequired,
+  hasFile: PropTypes.bool.isRequired,
   status: PropTypes.string.isRequired,
-  episodeCount: PropTypes.number.isRequired,
-  episodeFileCount: PropTypes.number.isRequired,
-  totalEpisodeCount: PropTypes.number.isRequired,
   posterWidth: PropTypes.number.isRequired,
   detailedProgressBar: PropTypes.bool.isRequired
 };

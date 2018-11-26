@@ -8,8 +8,8 @@ function ImportMovieTitle(props) {
   const {
     title,
     year,
-    network,
-    isExistingSeries
+    studio,
+    isExistingMovie
   } = props;
 
   return (
@@ -24,12 +24,12 @@ function ImportMovieTitle(props) {
       </div>
 
       {
-        !!network &&
-          <Label>{network}</Label>
+        !!studio &&
+          <Label>{studio}</Label>
       }
 
       {
-        isExistingSeries &&
+        isExistingMovie &&
           <Label
             kind={kinds.WARNING}
           >
@@ -43,8 +43,8 @@ function ImportMovieTitle(props) {
 ImportMovieTitle.propTypes = {
   title: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,
-  network: PropTypes.string,
-  isExistingSeries: PropTypes.bool.isRequired
+  studio: PropTypes.string,
+  isExistingMovie: PropTypes.bool.isRequired
 };
 
 export default ImportMovieTitle;

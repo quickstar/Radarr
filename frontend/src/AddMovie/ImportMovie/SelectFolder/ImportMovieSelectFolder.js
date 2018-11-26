@@ -102,7 +102,7 @@ class ImportMovieSelectFolder extends Component {
                       Make sure your files include the quality in the name. eg. <span className={styles.code}>episode.s02e15.bluray.mkv</span>
                     </li>
                     <li className={styles.tip}>
-                      Point Radarr to the folder containing all of your movies not a specific one. eg. <span className={styles.code}>"{isWindows ? 'C:\\movies' : '/movies'}"</span> and not <span className={styles.code}>"{isWindows ? 'C:\\tv shows\\the simpsons' : '/tv shows/the simpsons'}"</span>
+                      Point Radarr to the folder containing all of your movies not a specific one. eg. <span className={styles.code}>"{isWindows ? 'C:\\movies' : '/movies'}"</span> and not <span className={styles.code}>"{isWindows ? 'C:\\movies\\the matrix' : '/movies/the matrix'}"</span>
                     </li>
                   </ul>
                 </div>

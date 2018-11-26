@@ -2,11 +2,10 @@ import _ from 'lodash';
 import $ from 'jquery';
 import { createAction } from 'redux-actions';
 import { batchActions } from 'redux-batched-actions';
-import monitorOptions from 'Utilities/Series/monitorOptions';
 import getSectionState from 'Utilities/State/getSectionState';
 import updateSectionState from 'Utilities/State/updateSectionState';
 import createAjaxRequest from 'Utilities/createAjaxRequest';
-import getNewSeries from 'Utilities/Series/getNewSeries';
+import getNewMovie from 'Utilities/Movie/getNewMovie';
 import { createThunk, handleThunks } from 'Store/thunks';
 import createSetSettingValueReducer from './Creators/Reducers/createSetSettingValueReducer';
 import createHandleActions from './Creators/createHandleActions';
@@ -32,7 +31,7 @@ export const defaultState = {
 
   defaults: {
     rootFolderPath: '',
-    monitor: monitorOptions[0].key,
+    monitor: 'true',
     qualityProfileId: 0,
     tags: []
   }
@@ -113,9 +112,9 @@ export const actionHandlers = handleThunks({
   [ADD_MOVIE]: function(getState, payload, dispatch) {
     dispatch(set({ section, isAdding: true }));
 
-    const tvdbId = payload.tvdbId;
+    const tmdbId = payload.tmdbId;
     const items = getState().addMovie.items;
-    const newSeries = getNewSeries(_.cloneDeep(_.find(items, { tvdbId })), payload);
+    const newSeries = getNewMovie(_.cloneDeep(_.find(items, { tmdbId })), payload);
 
     const promise = $.ajax({
       url: '/movie',

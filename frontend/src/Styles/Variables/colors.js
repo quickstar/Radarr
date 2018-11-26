@@ -12,7 +12,7 @@ module.exports = {
   successColor: '#27c24c',
   dangerColor: '#f05050',
   warningColor: '#ffa500',
-  infoColor: radarrYellow,
+  infoColor: '#5d9cec',
   purple: '#7a43b6',
   pink: '#ff69b4',
   radarrYellow,

@@ -71,7 +71,7 @@ class MovieIndexRow extends Component {
       qualityProfile,
       added,
       inCinemas,
-      statistics,
+      sizeOnDisk,
       path,
       genres,
       ratings,
@@ -84,10 +84,6 @@ class MovieIndexRow extends Component {
       onRefreshMoviePress,
       onSearchPress
     } = this.props;
-
-    const {
-      sizeOnDisk
-    } = statistics;
 
     const {
       isEditMovieModalOpen,
@@ -316,7 +312,7 @@ MovieIndexRow.propTypes = {
   qualityProfile: PropTypes.object.isRequired,
   added: PropTypes.string,
   inCinemas: PropTypes.string,
-  statistics: PropTypes.object.isRequired,
+  sizeOnDisk: PropTypes.number.isRequired,
   path: PropTypes.string.isRequired,
   genres: PropTypes.arrayOf(PropTypes.string).isRequired,
   ratings: PropTypes.object.isRequired,
@@ -331,12 +327,6 @@ MovieIndexRow.propTypes = {
 };
 
 MovieIndexRow.defaultProps = {
-  statistics: {
-    seasonCount: 0,
-    episodeCount: 0,
-    episodeFileCount: 0,
-    totalEpisodeCount: 0
-  },
   genres: [],
   tags: []
 };

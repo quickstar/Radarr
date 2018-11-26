@@ -32,45 +32,17 @@ class Naming extends Component {
     this.setState({
       isNamingModalOpen: true,
       namingModalOptions: {
-        name: 'standardEpisodeFormat',
-        season: true,
-        episode: true,
+        name: 'standardMovieFormat',
         additional: true
       }
     });
   }
 
-  onDailyNamingModalOpenClick = () => {
+  onMovieFolderNamingModalOpenClick = () => {
     this.setState({
       isNamingModalOpen: true,
       namingModalOptions: {
-        name: 'dailyEpisodeFormat',
-        season: true,
-        episode: true,
-        daily: true,
-        additional: true
-      }
-    });
-  }
-
-  onAnimeNamingModalOpenClick = () => {
-    this.setState({
-      isNamingModalOpen: true,
-      namingModalOptions: {
-        name: 'animeEpisodeFormat',
-        season: true,
-        episode: true,
-        anime: true,
-        additional: true
-      }
-    });
-  }
-
-  onSeriesFolderNamingModalOpenClick = () => {
-    this.setState({
-      isNamingModalOpen: true,
-      namingModalOptions: {
-        name: 'seriesFolderFormat'
+        name: 'movieFolderFormat'
       }
     });
   }
@@ -101,64 +73,27 @@ class Naming extends Component {
 
     const renameEpisodes = hasSettings && settings.renameEpisodes.value;
 
-    const multiEpisodeStyleOptions = [
-      { key: 0, value: 'Extend' },
-      { key: 1, value: 'Duplicate' },
-      { key: 2, value: 'Repeat' },
-      { key: 3, value: 'Scene' },
-      { key: 4, value: 'Range' },
-      { key: 5, value: 'Prefixed Range' }
-    ];
-
-    const standardEpisodeFormatHelpTexts = [];
-    const standardEpisodeFormatErrors = [];
-    const dailyEpisodeFormatHelpTexts = [];
-    const dailyEpisodeFormatErrors = [];
-    const animeEpisodeFormatHelpTexts = [];
-    const animeEpisodeFormatErrors = [];
-    const seriesFolderFormatHelpTexts = [];
-    const seriesFolderFormatErrors = [];
+    const standardMovieFormatHelpTexts = [];
+    const standardMovieFormatErrors = [];
+    const movieFolderFormatHelpTexts = [];
+    const movieFolderFormatErrors = [];
 
     if (examplesPopulated) {
-      if (examples.singleEpisodeExample) {
-        standardEpisodeFormatHelpTexts.push(`Single Episode: ${examples.singleEpisodeExample}`);
+      if (examples.movieExample) {
+        standardMovieFormatHelpTexts.push(`Movie: ${examples.movieExample}`);
       } else {
-        standardEpisodeFormatErrors.push({ message: 'Single Episode: Invalid Format' });
+        standardMovieFormatErrors.push({ message: 'Movie: Invalid Format' });
       }
 
-      if (examples.multiEpisodeExample) {
-        standardEpisodeFormatHelpTexts.push(`Multi Episode: ${examples.multiEpisodeExample}`);
+      if (examples.movieFolderExample) {
+        movieFolderFormatHelpTexts.push(`Example: ${examples.movieFolderExample}`);
       } else {
-        standardEpisodeFormatErrors.push({ message: 'Multi Episode: Invalid Format' });
-      }
-
-      if (examples.dailyEpisodeExample) {
-        dailyEpisodeFormatHelpTexts.push(`Example: ${examples.dailyEpisodeExample}`);
-      } else {
-        dailyEpisodeFormatErrors.push({ message: 'Invalid Format' });
-      }
-
-      if (examples.animeEpisodeExample) {
-        animeEpisodeFormatHelpTexts.push(`Single Episode: ${examples.animeEpisodeExample}`);
-      } else {
-        animeEpisodeFormatErrors.push({ message: 'Single Episode: Invalid Format' });
-      }
-
-      if (examples.animeMultiEpisodeExample) {
-        animeEpisodeFormatHelpTexts.push(`Multi Episode: ${examples.animeMultiEpisodeExample}`);
-      } else {
-        animeEpisodeFormatErrors.push({ message: 'Multi Episode: Invalid Format' });
-      }
-
-      if (examples.seriesFolderExample) {
-        seriesFolderFormatHelpTexts.push(`Example: ${examples.seriesFolderExample}`);
-      } else {
-        seriesFolderFormatErrors.push({ message: 'Invalid Format' });
+        movieFolderFormatErrors.push({ message: 'Invalid Format' });
       }
     }
 
     return (
-      <FieldSet legend="Episode Naming">
+      <FieldSet legend="Movie Naming">
         {
           isFetching &&
             <LoadingIndicator />
@@ -173,7 +108,7 @@ class Naming extends Component {
           hasSettings && !isFetching && !error &&
             <Form>
               <FormGroup size={sizes.MEDIUM}>
-                <FormLabel>Rename Episodes</FormLabel>
+                <FormLabel>Rename Movies</FormLabel>
 
                 <FormInputGroup
                   type={inputTypes.CHECK}
@@ -200,47 +135,17 @@ class Naming extends Component {
                 renameEpisodes &&
                   <div>
                     <FormGroup size={sizes.LARGE}>
-                      <FormLabel>Standard Episode Format</FormLabel>
+                      <FormLabel>Standard Movie Format</FormLabel>
 
                       <FormInputGroup
                         inputClassName={styles.namingInput}
                         type={inputTypes.TEXT}
-                        name="standardEpisodeFormat"
+                        name="standardMovieFormat"
                         buttons={<FormInputButton onPress={this.onStandardNamingModalOpenClick}>?</FormInputButton>}
                         onChange={onInputChange}
-                        {...settings.standardEpisodeFormat}
-                        helpTexts={standardEpisodeFormatHelpTexts}
-                        errors={[...standardEpisodeFormatErrors, ...settings.standardEpisodeFormat.errors]}
-                      />
-                    </FormGroup>
-
-                    <FormGroup size={sizes.LARGE}>
-                      <FormLabel>Daily Episode Format</FormLabel>
-
-                      <FormInputGroup
-                        inputClassName={styles.namingInput}
-                        type={inputTypes.TEXT}
-                        name="dailyEpisodeFormat"
-                        buttons={<FormInputButton onPress={this.onDailyNamingModalOpenClick}>?</FormInputButton>}
-                        onChange={onInputChange}
-                        {...settings.dailyEpisodeFormat}
-                        helpTexts={dailyEpisodeFormatHelpTexts}
-                        errors={[...dailyEpisodeFormatErrors, ...settings.dailyEpisodeFormat.errors]}
-                      />
-                    </FormGroup>
-
-                    <FormGroup size={sizes.LARGE}>
-                      <FormLabel>Anime Episode Format</FormLabel>
-
-                      <FormInputGroup
-                        inputClassName={styles.namingInput}
-                        type={inputTypes.TEXT}
-                        name="animeEpisodeFormat"
-                        buttons={<FormInputButton onPress={this.onAnimeNamingModalOpenClick}>?</FormInputButton>}
-                        onChange={onInputChange}
-                        {...settings.animeEpisodeFormat}
-                        helpTexts={animeEpisodeFormatHelpTexts}
-                        errors={[...animeEpisodeFormatErrors, ...settings.animeEpisodeFormat.errors]}
+                        {...settings.standardMovieFormat}
+                        helpTexts={standardMovieFormatHelpTexts}
+                        errors={[...standardMovieFormatErrors, ...settings.standardMovieFormat.errors]}
                       />
                     </FormGroup>
                   </div>
@@ -250,29 +155,17 @@ class Naming extends Component {
                 advancedSettings={advancedSettings}
                 isAdvanced={true}
               >
-                <FormLabel>Series Folder Format</FormLabel>
+                <FormLabel>Movie Folder Format</FormLabel>
 
                 <FormInputGroup
                   inputClassName={styles.namingInput}
                   type={inputTypes.TEXT}
-                  name="seriesFolderFormat"
-                  buttons={<FormInputButton onPress={this.onSeriesFolderNamingModalOpenClick}>?</FormInputButton>}
+                  name="movieFolderFormat"
+                  buttons={<FormInputButton onPress={this.onMovieFolderNamingModalOpenClick}>?</FormInputButton>}
                   onChange={onInputChange}
-                  {...settings.seriesFolderFormat}
-                  helpTexts={['Used when adding a new series or moving series via the series editor', ...seriesFolderFormatHelpTexts]}
-                  errors={[...seriesFolderFormatErrors, ...settings.seriesFolderFormat.errors]}
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <FormLabel>Multi-Episode Style</FormLabel>
-
-                <FormInputGroup
-                  type={inputTypes.SELECT}
-                  name="multiEpisodeStyle"
-                  values={multiEpisodeStyleOptions}
-                  onChange={onInputChange}
-                  {...settings.multiEpisodeStyle}
+                  {...settings.movieFolderFormat}
+                  helpTexts={['Used when adding a new movie or moving movies via the editor', ...movieFolderFormatHelpTexts]}
+                  errors={[...movieFolderFormatErrors, ...settings.movieFolderFormat.errors]}
                 />
               </FormGroup>
 

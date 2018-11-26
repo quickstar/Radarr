@@ -6,12 +6,10 @@ import styles from './MovieIndexPosterInfo.css';
 
 function MovieIndexPosterInfo(props) {
   const {
-    network,
+    studio,
     qualityProfile,
     showQualityProfile,
-    previousAiring,
     added,
-    seasonCount,
     path,
     sizeOnDisk,
     sortKey,
@@ -20,10 +18,10 @@ function MovieIndexPosterInfo(props) {
     timeFormat
   } = props;
 
-  if (sortKey === 'network' && network) {
+  if (sortKey === 'studio' && studio) {
     return (
       <div className={styles.info}>
-        {network}
+        {studio}
       </div>
     );
   }
@@ -32,24 +30,6 @@ function MovieIndexPosterInfo(props) {
     return (
       <div className={styles.info}>
         {qualityProfile.name}
-      </div>
-    );
-  }
-
-  if (sortKey === 'previousAiring' && previousAiring) {
-    return (
-      <div className={styles.info}>
-        {
-          getRelativeDate(
-            previousAiring,
-            shortDateFormat,
-            showRelativeDates,
-            {
-              timeFormat,
-              timeForToday: true
-            }
-          )
-        }
       </div>
     );
   }
@@ -68,22 +48,6 @@ function MovieIndexPosterInfo(props) {
     return (
       <div className={styles.info}>
         {`Added ${addedDate}`}
-      </div>
-    );
-  }
-
-  if (sortKey === 'seasonCount') {
-    let seasons = '1 season';
-
-    if (seasonCount === 0) {
-      seasons = 'No seasons';
-    } else if (seasonCount > 1) {
-      seasons = `${seasonCount} seasons`;
-    }
-
-    return (
-      <div className={styles.info}>
-        {seasons}
       </div>
     );
   }
@@ -108,12 +72,10 @@ function MovieIndexPosterInfo(props) {
 }
 
 MovieIndexPosterInfo.propTypes = {
-  network: PropTypes.string,
+  studio: PropTypes.string,
   showQualityProfile: PropTypes.bool.isRequired,
   qualityProfile: PropTypes.object.isRequired,
-  previousAiring: PropTypes.string,
   added: PropTypes.string,
-  seasonCount: PropTypes.number.isRequired,
   path: PropTypes.string.isRequired,
   sizeOnDisk: PropTypes.number,
   sortKey: PropTypes.string.isRequired,

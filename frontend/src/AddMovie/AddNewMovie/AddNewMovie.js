@@ -131,7 +131,7 @@ class AddNewMovie extends Component {
                   items.map((item) => {
                     return (
                       <AddNewMovieSearchResultConnector
-                        key={item.imdbId}
+                        key={item.tmdbId}
                         {...item}
                       />
                     );
@@ -144,9 +144,9 @@ class AddNewMovie extends Component {
             !isFetching && !error && !items.length && !!term &&
               <div className={styles.message}>
                 <div className={styles.noResults}>Couldn't find any results for '{term}'</div>
-                <div>You can also search using TMDB ID or IMDB ID of a show. eg. tmdb:71663</div>
+                <div>You can also search using TMDB ID or IMDB ID of a movie. eg. tmdb:71663</div>
                 <div>
-                  <Link to="https://github.com/Radarr/Radarr/wiki/FAQ#why-cant-i-add-a-new-series-when-i-know-the-tvdb-id">
+                  <Link to="https://github.com/Radarr/Radarr/wiki/FAQ#why-cant-i-add-a-new-movie-when-i-know-the-tmdb-id">
                     Why can't I find my movie?
                   </Link>
                 </div>
@@ -157,7 +157,7 @@ class AddNewMovie extends Component {
             !term &&
               <div className={styles.message}>
                 <div className={styles.helpText}>It's easy to add a new movie, just start typing the name the movie you want to add.</div>
-                <div>You can also search using TMDB ID of a show. eg. tmdb:71663</div>
+                <div>You can also search using TMDB ID of a movie. eg. tmdb:71663</div>
               </div>
           }
 

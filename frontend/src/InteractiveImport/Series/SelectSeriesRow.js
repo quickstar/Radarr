@@ -9,7 +9,7 @@ class SelectSeriesRow extends Component {
   // Listeners
 
   onPress = () => {
-    this.props.onSeriesSelect(this.props.id);
+    this.props.onMovieSelect(this.props.id);
   }
 
   //
@@ -31,7 +31,7 @@ class SelectSeriesRow extends Component {
 SelectSeriesRow.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
-  onSeriesSelect: PropTypes.func.isRequired
+  onMovieSelect: PropTypes.func.isRequired
 };
 
 export default SelectSeriesRow;

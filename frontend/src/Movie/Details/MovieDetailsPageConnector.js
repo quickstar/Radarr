@@ -12,9 +12,9 @@ function createMapStateToProps() {
   return createSelector(
     (state, { match }) => match,
     createAllMoviesSelector(),
-    (match, allSeries) => {
+    (match, allMovies) => {
       const titleSlug = match.params.titleSlug;
-      const movieIndex = _.findIndex(allSeries, { titleSlug });
+      const movieIndex = _.findIndex(allMovies, { titleSlug });
 
       if (movieIndex > -1) {
         return {

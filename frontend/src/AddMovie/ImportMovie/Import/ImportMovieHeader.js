@@ -1,12 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { icons, tooltipPositions } from 'Helpers/Props';
-import Icon from 'Components/Icon';
-import Popover from 'Components/Tooltip/Popover';
 import VirtualTableHeader from 'Components/Table/VirtualTableHeader';
 import VirtualTableHeaderCell from 'Components/Table/VirtualTableHeaderCell';
 import VirtualTableSelectAllHeaderCell from 'Components/Table/VirtualTableSelectAllHeaderCell';
-import SeriesMonitoringOptionsPopoverContent from 'AddMovie/SeriesMonitoringOptionsPopoverContent';
 import styles from './ImportMovieHeader.css';
 
 function ImportMovieHeader(props) {
@@ -36,18 +32,6 @@ function ImportMovieHeader(props) {
         name="monitor"
       >
         Monitor
-
-        <Popover
-          anchor={
-            <Icon
-              className={styles.detailsIcon}
-              name={icons.INFO}
-            />
-          }
-          title="Monitoring Options"
-          body={<SeriesMonitoringOptionsPopoverContent />}
-          position={tooltipPositions.RIGHT}
-        />
       </VirtualTableHeaderCell>
 
       <VirtualTableHeaderCell

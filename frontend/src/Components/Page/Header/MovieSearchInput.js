@@ -76,9 +76,9 @@ class MovieSearchInput extends Component {
     );
   }
 
-  goToSeries(series) {
+  goToMovie(movie) {
     this.setState({ value: '' });
-    this.props.onGoToSeries(series.titleSlug);
+    this.props.onGoToMovie(movie.titleSlug);
   }
 
   reset() {
@@ -121,9 +121,9 @@ class MovieSearchInput extends Component {
     // otherwise go to the selected series.
 
     if (highlightedSuggestionIndex == null) {
-      this.goToSeries(suggestions[0]);
+      this.goToMovie(suggestions[0]);
     } else {
-      this.goToSeries(suggestions[highlightedSuggestionIndex]);
+      this.goToMovie(suggestions[highlightedSuggestionIndex]);
     }
   }
 
@@ -134,14 +134,14 @@ class MovieSearchInput extends Component {
   onSuggestionsFetchRequested = ({ value }) => {
     const lowerCaseValue = jdu.replace(value).toLowerCase();
 
-    const suggestions = this.props.series.filter((series) => {
+    const suggestions = this.props.movie.filter((movie) => {
       // Check the title first and if there isn't a match fallback to
       // the alternate titles and finally the tags.
 
       return (
-        series.cleanTitle.contains(lowerCaseValue) ||
-        series.alternateTitles.some((alternateTitle) => alternateTitle.cleanTitle.contains(lowerCaseValue)) ||
-        series.tags.some((tag) => tag.cleanLabel.contains(lowerCaseValue))
+        movie.cleanTitle.contains(lowerCaseValue) ||
+        movie.alternateTitles.some((alternateTitle) => alternateTitle.cleanTitle.contains(lowerCaseValue)) ||
+        movie.tags.some((tag) => tag.cleanLabel.contains(lowerCaseValue))
       );
     });
 
@@ -156,7 +156,7 @@ class MovieSearchInput extends Component {
     if (suggestion.type === ADD_NEW_TYPE) {
       this.props.onGoToAddNewMovie(this.state.value);
     } else {
-      this.goToSeries(suggestion);
+      this.goToMovie(suggestion);
     }
   }
 
@@ -173,13 +173,13 @@ class MovieSearchInput extends Component {
 
     if (suggestions.length) {
       suggestionGroups.push({
-        title: 'Existing Series',
+        title: 'Existing Movie',
         suggestions
       });
     }
 
     suggestionGroups.push({
-      title: 'Add New Series',
+      title: 'Add New Movie',
       suggestions: [
         {
           type: ADD_NEW_TYPE,
@@ -237,8 +237,8 @@ class MovieSearchInput extends Component {
 }
 
 MovieSearchInput.propTypes = {
-  series: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onGoToSeries: PropTypes.func.isRequired,
+  movie: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onGoToMovie: PropTypes.func.isRequired,
   onGoToAddNewMovie: PropTypes.func.isRequired,
   bindShortcut: PropTypes.func.isRequired
 };

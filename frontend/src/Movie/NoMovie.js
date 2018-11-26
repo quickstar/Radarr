@@ -20,7 +20,7 @@ function NoMovie(props) {
   return (
     <div>
       <div className={styles.message}>
-        No movies found, to get started you'll want to add a new series or import some existing ones.
+        No movies found, to get started you'll want to add a new movie or import some existing ones.
       </div>
 
       <div className={styles.buttonContainer}>

@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { icons, kinds, inputTypes, tooltipPositions } from 'Helpers/Props';
-import Icon from 'Components/Icon';
+import { kinds, inputTypes } from 'Helpers/Props';
 import SpinnerButton from 'Components/Link/SpinnerButton';
 import Form from 'Components/Form/Form';
 import FormGroup from 'Components/Form/FormGroup';
@@ -12,9 +11,7 @@ import ModalContent from 'Components/Modal/ModalContent';
 import ModalHeader from 'Components/Modal/ModalHeader';
 import ModalBody from 'Components/Modal/ModalBody';
 import ModalFooter from 'Components/Modal/ModalFooter';
-import Popover from 'Components/Tooltip/Popover';
 import MoviePoster from 'Movie/MoviePoster';
-import SeriesMonitoringOptionsPopoverContent from 'AddMovie/SeriesMonitoringOptionsPopoverContent';
 import styles from './AddNewMovieModalContent.css';
 
 class AddNewMovieModalContent extends Component {
@@ -41,8 +38,8 @@ class AddNewMovieModalContent extends Component {
     this.props.onInputChange({ name: 'qualityProfileId', value: parseInt(value) });
   }
 
-  onAddSeriesPress = () => {
-    this.props.onAddSeriesPress(this.state.searchForMissingEpisodes);
+  onAddMoviePress = () => {
+    this.props.onAddMoviePress(this.state.searchForMissingEpisodes);
   }
 
   //
@@ -108,22 +105,10 @@ class AddNewMovieModalContent extends Component {
                 <FormGroup>
                   <FormLabel>
                     Monitor
-
-                    <Popover
-                      anchor={
-                        <Icon
-                          className={styles.labelIcon}
-                          name={icons.INFO}
-                        />
-                      }
-                      title="Monitoring Options"
-                      body={<SeriesMonitoringOptionsPopoverContent />}
-                      position={tooltipPositions.RIGHT}
-                    />
                   </FormLabel>
 
                   <FormInputGroup
-                    type={inputTypes.MONITOR_EPISODES_SELECT}
+                    type={inputTypes.MOVIE_MONITORED_SELECT}
                     name="monitor"
                     onChange={onInputChange}
                     {...monitor}
@@ -175,7 +160,7 @@ class AddNewMovieModalContent extends Component {
             className={styles.addButton}
             kind={kinds.SUCCESS}
             isSpinning={isAdding}
-            onPress={this.onAddSeriesPress}
+            onPress={this.onAddMoviePress}
           >
             Add {title}
           </SpinnerButton>
@@ -199,7 +184,7 @@ AddNewMovieModalContent.propTypes = {
   isSmallScreen: PropTypes.bool.isRequired,
   onModalClose: PropTypes.func.isRequired,
   onInputChange: PropTypes.func.isRequired,
-  onAddSeriesPress: PropTypes.func.isRequired
+  onAddMoviePress: PropTypes.func.isRequired
 };
 
 export default AddNewMovieModalContent;

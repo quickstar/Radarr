@@ -90,7 +90,7 @@ class EditMovieModalContent extends Component {
               <FormInputGroup
                 type={inputTypes.CHECK}
                 name="monitored"
-                helpText="Download monitored episodes in this series"
+                helpText="Download movie if available"
                 {...monitored}
                 onChange={onInputChange}
               />
