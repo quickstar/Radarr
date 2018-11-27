@@ -24,6 +24,8 @@ namespace Radarr.Api.V2.NetImport
 
             var resource = base.ToResource(definition);
 
+            resource.Enabled = definition.Enabled;
+            resource.EnableAuto = definition.EnableAuto;
             resource.ShouldMonitor = definition.ShouldMonitor;
             resource.RootFolderPath = definition.RootFolderPath;
             resource.QualityProfileId = definition.ProfileId;
@@ -40,6 +42,8 @@ namespace Radarr.Api.V2.NetImport
 
             var definition = base.ToModel(resource);
 
+            definition.Enabled = resource.Enabled;
+            definition.EnableAuto = resource.EnableAuto;
             definition.ShouldMonitor = resource.ShouldMonitor;
             definition.RootFolderPath = resource.RootFolderPath;
             definition.ProfileId = resource.QualityProfileId;
