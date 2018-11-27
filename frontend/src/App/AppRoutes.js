@@ -19,6 +19,7 @@ import Profiles from 'Settings/Profiles/Profiles';
 import Quality from 'Settings/Quality/Quality';
 import IndexerSettingsConnector from 'Settings/Indexers/IndexerSettingsConnector';
 import DownloadClientSettingsConnector from 'Settings/DownloadClients/DownloadClientSettingsConnector';
+import NetImportSettingsConnector from 'Settings/NetImport/NetImportSettingsConnector';
 import NotificationSettings from 'Settings/Notifications/NotificationSettings';
 import MetadataSettings from 'Settings/Metadata/MetadataSettings';
 import TagSettings from 'Settings/Tags/TagSettings';
@@ -146,6 +147,11 @@ function AppRoutes(props) {
       <Route
         path="/settings/downloadclients"
         component={DownloadClientSettingsConnector}
+      />
+
+      <Route
+        path="/settings/netimports"
+        component={NetImportSettingsConnector}
       />
 
       <Route

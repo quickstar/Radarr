@@ -26,7 +26,7 @@ function createMapStateToProps() {
 const mapDispatchToProps = {
   dispatchSetSeriesEditorSort: setSeriesEditorSort,
   dispatchSetSeriesEditorFilter: setSeriesEditorFilter,
-  dispatchSaveSeriesEditor: saveSeriesEditor,
+  dispatchSaveMovieEditor: saveSeriesEditor,
   dispatchFetchRootFolders: fetchRootFolders,
   dispatchExecuteCommand: executeCommand
 };
@@ -52,7 +52,7 @@ class SeriesEditorConnector extends Component {
   }
 
   onSaveSelected = (payload) => {
-    this.props.dispatchSaveSeriesEditor(payload);
+    this.props.dispatchSaveMovieEditor(payload);
   }
 
   onMoveSelected = (payload) => {
@@ -80,7 +80,7 @@ class SeriesEditorConnector extends Component {
 SeriesEditorConnector.propTypes = {
   dispatchSetSeriesEditorSort: PropTypes.func.isRequired,
   dispatchSetSeriesEditorFilter: PropTypes.func.isRequired,
-  dispatchSaveSeriesEditor: PropTypes.func.isRequired,
+  dispatchSaveMovieEditor: PropTypes.func.isRequired,
   dispatchFetchRootFolders: PropTypes.func.isRequired,
   dispatchExecuteCommand: PropTypes.func.isRequired
 };

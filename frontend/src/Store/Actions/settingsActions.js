@@ -7,6 +7,8 @@ import downloadClientOptions from './Settings/downloadClientOptions';
 import general from './Settings/general';
 import indexerOptions from './Settings/indexerOptions';
 import indexers from './Settings/indexers';
+import netImportOptions from './Settings/netImportOptions';
+import netImports from './Settings/netImports';
 import mediaManagement from './Settings/mediaManagement';
 import metadata from './Settings/metadata';
 import naming from './Settings/naming';
@@ -24,6 +26,8 @@ export * from './Settings/downloadClientOptions';
 export * from './Settings/general';
 export * from './Settings/indexerOptions';
 export * from './Settings/indexers';
+export * from './Settings/netImportOptions';
+export * from './Settings/netImports';
 export * from './Settings/mediaManagement';
 export * from './Settings/metadata';
 export * from './Settings/naming';
@@ -52,6 +56,8 @@ export const defaultState = {
   general: general.defaultState,
   indexerOptions: indexerOptions.defaultState,
   indexers: indexers.defaultState,
+  netImportOptions: netImportOptions.defaultState,
+  netImports: netImports.defaultState,
   mediaManagement: mediaManagement.defaultState,
   metadata: metadata.defaultState,
   naming: naming.defaultState,
@@ -88,6 +94,8 @@ export const actionHandlers = handleThunks({
   ...general.actionHandlers,
   ...indexerOptions.actionHandlers,
   ...indexers.actionHandlers,
+  ...netImportOptions.actionHandlers,
+  ...netImports.actionHandlers,
   ...mediaManagement.actionHandlers,
   ...metadata.actionHandlers,
   ...naming.actionHandlers,
@@ -115,6 +123,8 @@ export const reducers = createHandleActions({
   ...general.reducers,
   ...indexerOptions.reducers,
   ...indexers.reducers,
+  ...netImportOptions.reducers,
+  ...netImports.reducers,
   ...mediaManagement.reducers,
   ...metadata.reducers,
   ...naming.reducers,

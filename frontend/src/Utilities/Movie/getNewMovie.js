@@ -7,7 +7,7 @@ function getNewMovie(movie, payload) {
     tags
   } = payload;
 
-  movie.monitored = monitor;
+  movie.monitored = monitor === 'true';
   movie.qualityProfileId = qualityProfileId;
   movie.rootFolderPath = rootFolderPath;
   movie.tags = tags;

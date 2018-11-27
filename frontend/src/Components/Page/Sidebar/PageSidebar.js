@@ -96,6 +96,10 @@ const links = [
         to: '/settings/downloadclients'
       },
       {
+        title: 'Lists',
+        to: '/settings/netimports'
+      },
+      {
         title: 'Connect',
         to: '/settings/connect'
       },

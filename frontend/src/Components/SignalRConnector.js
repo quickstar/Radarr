@@ -11,6 +11,7 @@ import { setAppValue, setVersion } from 'Store/Actions/appActions';
 import { update, updateItem, removeItem } from 'Store/Actions/baseActions';
 import { fetchHealth } from 'Store/Actions/systemActions';
 import { fetchQueue, fetchQueueDetails } from 'Store/Actions/queueActions';
+import { fetchRootFolders } from 'Store/Actions/rootFolderActions';
 import { fetchTags, fetchTagDetails } from 'Store/Actions/tagActions';
 
 function getState(status) {
@@ -70,6 +71,7 @@ const mapDispatchToProps = {
   dispatchFetchHealth: fetchHealth,
   dispatchFetchQueue: fetchQueue,
   dispatchFetchQueueDetails: fetchQueueDetails,
+  dispatchFetchRootFolders: fetchRootFolders,
   dispatchFetchTags: fetchTags,
   dispatchFetchTagDetails: fetchTagDetails
 };
@@ -219,6 +221,10 @@ class SignalRConnector extends Component {
     this.props.dispatchUpdate({ section: 'queue.status', data: body.resource });
   }
 
+  handleRootfolder = () => {
+    this.props.dispatchFetchRootFolders();
+  }
+
   handleVersion = (body) => {
     const version = body.Version;
 
@@ -337,6 +343,7 @@ SignalRConnector.propTypes = {
   dispatchFetchHealth: PropTypes.func.isRequired,
   dispatchFetchQueue: PropTypes.func.isRequired,
   dispatchFetchQueueDetails: PropTypes.func.isRequired,
+  dispatchFetchRootFolders: PropTypes.func.isRequired,
   dispatchFetchTags: PropTypes.func.isRequired,
   dispatchFetchTagDetails: PropTypes.func.isRequired
 };

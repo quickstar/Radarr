@@ -59,8 +59,8 @@ function createMapStateToProps() {
 }
 
 const mapDispatchToProps = {
-  dispatchSetSeriesValue: setMovieValue,
-  dispatchSaveSeries: saveMovie
+  dispatchSetMovieValue: setMovieValue,
+  dispatchSaveMovie: saveMovie
 };
 
 class EditMovieModalContentConnector extends Component {
@@ -78,12 +78,12 @@ class EditMovieModalContentConnector extends Component {
   // Listeners
 
   onInputChange = ({ name, value }) => {
-    this.props.dispatchSetSeriesValue({ name, value });
+    this.props.dispatchSetMovieValue({ name, value });
   }
 
   onSavePress = (moveFiles) => {
-    this.props.dispatchSaveSeries({
-      id: this.props.seriesId,
+    this.props.dispatchSaveMovie({
+      id: this.props.movieId,
       moveFiles
     });
   }
@@ -107,8 +107,8 @@ EditMovieModalContentConnector.propTypes = {
   movieId: PropTypes.number,
   isSaving: PropTypes.bool.isRequired,
   saveError: PropTypes.object,
-  dispatchSetSeriesValue: PropTypes.func.isRequired,
-  dispatchSaveSeries: PropTypes.func.isRequired,
+  dispatchSetMovieValue: PropTypes.func.isRequired,
+  dispatchSaveMovie: PropTypes.func.isRequired,
   onModalClose: PropTypes.func.isRequired
 };
 
