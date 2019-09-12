@@ -137,12 +137,12 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
 
         private DateTime GetDate(HtmlNode link)
         {
-            var linkPreviousSibling = link.PreviousSibling.InnerText
+            var dateAsString = link.PreviousSibling.InnerText
                 .Replace("\n", string.Empty)
                 .Replace(" ", string.Empty)
                 .Replace("-", string.Empty);
 
-            if (DateTime.TryParse(linkPreviousSibling, out var date))
+            if (DateTime.TryParse(dateAsString, out var date))
             {
                 var now = DateTime.UtcNow;
                 return date.AddHours(now.Hour).AddMinutes(now.Minute);
@@ -170,9 +170,9 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
 
         private string GetDownloadUrl(HtmlNode detailPage)
         {
-            var linkList = detailPage.Descendants("span").Where(n =>
-                n.Attributes.Any(a =>
-                    a.Name.EqualsIgnoreCase("style") && a.Value.EqualsIgnoreCase("display:inline;")));
+            var linkList = detailPage
+                .Descendants("span")
+                .Where(n => n.Attributes.Any(a => a.Name.EqualsIgnoreCase("style") && a.Value.EqualsIgnoreCase("display:inline;")));
 
             foreach (var link in linkList.Where(l => CheckText(l.FirstChild.InnerText)))
             {

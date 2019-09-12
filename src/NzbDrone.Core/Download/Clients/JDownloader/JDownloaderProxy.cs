@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using NLog;
 using NzbDrone.Common.Cache;
@@ -33,7 +34,13 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
                 foreach (var device in devices)
                 {
                     var deviceHandler = jdownloaderHandler.GetDeviceHandler(device);
-                    var addLink = new AddLinkRequestObject { AutoExtract = true, AutoStart = false, Links = dlcLink, PackageName = packageName };
+                    var addLink = new AddLinkRequestObject
+                    {
+                        AutoExtract = true,
+                        AutoStart = false,
+                        Links = dlcLink,
+                        PackageName = packageName
+                    };
                     var packageId = deviceHandler.LinkgrabberV2.AddLinks(addLink);
                     return packageId;
                 }
@@ -69,18 +76,27 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
                     var deviceHandler = jdownloaderHandler.GetDeviceHandler(device);
                     while (deviceHandler.LinkgrabberV2.IsCollecting())
                     {
-                        Thread.Sleep(5000);
+                        Thread.Sleep(2000);
                     }
 
-                    List<QueryPackagesResponseObject> queryPackagesResponseObjects = deviceHandler.LinkgrabberV2.QueryPackages(new QueryPackagesRequestObject());
+                    var queryPackagesResponseObjects = deviceHandler
+                        .LinkgrabberV2
+                        .QueryPackages(new QueryPackagesRequestObject())
+                        .Where(p => packageId.ToString().Substring(0, 7) == p.Uuid.ToString().Substring(0, 7));
+                        
                     foreach (var package in queryPackagesResponseObjects)
                     {
-                        if (packageId.ToString().Substring(0, 7) == package.Uuid.ToString().Substring(0, 7))
-                        {
-                        }
-
                         deviceHandler.LinkgrabberV2.RenamePackage(package.Uuid, packageName);
                     }
+
+                    var packageToDownload = deviceHandler
+                        .LinkgrabberV2
+                        .QueryPackages(new QueryPackagesRequestObject())
+                        .FirstOrDefault().Uuid;
+
+                    var queryLinks = deviceHandler.LinkgrabberV2.QueryLinks();
+                    deviceHandler.LinkgrabberV2.MoveToDownloadlist(queryLinks.Select(l => l.Id).ToArray(),  new []{ packageToDownload });
+                    deviceHandler.DownloadController.ForceDownload(new long[0],  new []{ packageId });
                 }
             }
         }
