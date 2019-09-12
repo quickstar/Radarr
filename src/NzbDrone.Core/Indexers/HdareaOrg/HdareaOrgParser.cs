@@ -36,7 +36,9 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
                 var doc = new HtmlDocument();
                 doc.LoadHtml(indexerResponse.Content);
 
-                var rawLinks = doc.DocumentNode.Descendants(0).FirstOrDefault(n => n.HasClass("whitecontent"))?.Descendants("a")
+                var rawLinks = doc.DocumentNode.Descendants(0)
+                    .FirstOrDefault(n => n.HasClass("whitecontent"))?
+                    .Descendants("a")
                     .Where(n => n.HasAttributes && n.Attributes.Contains("title"));
 
                 DateTime start = DateTime.UtcNow;
@@ -45,7 +47,7 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
                     var href = a.Attributes["href"];
                     var title = a.Attributes["title"];
                     var detailPage = FetchLinkDetail(href.Value);
-                    return new JDownloaderInfo
+                    return new HdareaOrgReleaseInfo
                     {
                         DownloadProtocol = DownloadProtocol.Dlc,
                         Guid = $"HdareaOrg-{GetId(href)}",
@@ -135,11 +137,15 @@ namespace NzbDrone.Core.Indexers.HdareaOrg
 
         private DateTime GetDate(HtmlNode link)
         {
-            var linkPreviousSibling = link.PreviousSibling.InnerText.Replace("\n", string.Empty).Replace(" ", string.Empty).Replace("-", string.Empty);
-            DateTime date;
-            if (DateTime.TryParse(linkPreviousSibling, out date))
+            var linkPreviousSibling = link.PreviousSibling.InnerText
+                .Replace("\n", string.Empty)
+                .Replace(" ", string.Empty)
+                .Replace("-", string.Empty);
+
+            if (DateTime.TryParse(linkPreviousSibling, out var date))
             {
-                return date;
+                var now = DateTime.UtcNow;
+                return date.AddHours(now.Hour).AddMinutes(now.Minute);
             }
 
             return DateTime.MinValue;

@@ -2,9 +2,9 @@ using System.Text;
 
 namespace NzbDrone.Core.Parser.Model
 {
-    public class JDownloaderInfo : ReleaseInfo
+    public class HdareaOrgReleaseInfo : ReleaseInfo
     {
-        public JDownloaderInfo()
+        public HdareaOrgReleaseInfo()
         {
             IndexerFlags = 0;
         }
@@ -18,7 +18,7 @@ namespace NzbDrone.Core.Parser.Model
             switch (format.ToUpperInvariant())
             {
                 case "L": // Long format
-                    stringBuilder.AppendLine("ShareOnlineBizUrl: " + ShareOnlineBizUrl ?? "Empty");
+                    stringBuilder.AppendLine("ShareOnlineBizUrl: " + (ShareOnlineBizUrl ?? string.Empty));
                     break;
             }
 
