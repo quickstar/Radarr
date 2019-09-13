@@ -1,6 +1,6 @@
 ﻿namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Login
 {
-    internal class LoginObject
+    public class LoginObject
     {
 
         [Newtonsoft.Json.JsonProperty(PropertyName = "sessiontoken")]
@@ -17,5 +17,7 @@
         public byte[] ServerEncryptionToken;
         [Newtonsoft.Json.JsonIgnore]
         public byte[] DeviceEncryptionToken;
+
+        internal LoginObject() { }
     }
 }

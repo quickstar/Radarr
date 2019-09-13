@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Web;
 using Newtonsoft.Json.Linq;
-using NzbDrone.Core.Download.Clients.JDownloader.ApiHandler;
-using NzbDrone.Core.Download.Clients.JDownloader.Models;
-using NzbDrone.Core.Download.Clients.JDownloader.Models.Devices;
-using NzbDrone.Core.Download.Clients.JDownloader.Models.Login;
-using NzbDrone.Core.Download.Clients.JDownloader.Namespaces;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandler;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Login;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces;
 
-namespace NzbDrone.Core.Download.Clients.JDownloader
+namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api
 {
     public class DeviceHandler
     {
@@ -29,11 +29,11 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
         public Dialogs Dialogs;
         public DownloadController DownloadController;
         public DownloadsV2 DownloadsV2;
-        public Extensions Extensions;
+        public Namespaces.Extensions Extensions;
         public Extraction Extraction;
         public LinkCrawler LinkCrawler;
         public LinkGrabberV2 LinkgrabberV2;
-        public Update Update;
+        public Namespaces.Update Update;
         public Jd Jd;
         public Namespaces.System System;
 
@@ -51,11 +51,11 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
             Dialogs = new Dialogs(_apiHandler, _device);
             DownloadController = new DownloadController(_apiHandler, _device);
             DownloadsV2 = new DownloadsV2(_apiHandler, _device);
-            Extensions = new Extensions(_apiHandler, _device);
+            Extensions = new Namespaces.Extensions(_apiHandler, _device);
             Extraction = new Extraction(_apiHandler, _device);
             LinkCrawler = new LinkCrawler(_apiHandler, _device);
             LinkgrabberV2 = new LinkGrabberV2(_apiHandler, _device);
-            Update = new Update(_apiHandler, _device);
+            Update = new Namespaces.Update(_apiHandler, _device);
             Jd = new Jd(_apiHandler, _device);
             System = new Namespaces.System(_apiHandler, _device);
             DirectConnect(useJdownloaderApi);

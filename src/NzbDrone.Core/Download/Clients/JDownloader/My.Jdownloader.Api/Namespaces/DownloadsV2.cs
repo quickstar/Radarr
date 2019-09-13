@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandler;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
@@ -5,15 +8,13 @@ using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Downl
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
-    public class DownloadsV2
+    public class DownloadsV2 : Base
     {
-        private readonly JDownloaderApiHandler _ApiHandler;
-        private readonly DeviceObject _Device;
 
         internal DownloadsV2(JDownloaderApiHandler apiHandler, DeviceObject device)
         {
-            _ApiHandler = apiHandler;
-            _Device = device;
+            ApiHandler = apiHandler;
+            Device = device;
         }
 
         /// <summary>
@@ -22,7 +23,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>The stop mark as long.</returns>
         public long GetStopMark()
         {
-            var response = _ApiHandler.CallAction<DefaultReturnObject>(_Device, "/linkgrabberv2/getStopMark", null, JDownloaderHandler.LoginObject);
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/getStopMark", null, JDownloaderHandler.LoginObject);
             if (response?.Data == null)
                 return -1;
 
@@ -35,10 +36,43 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>Returns informations about a stop marked link.</returns>
         public StopMarkedLinkReturnObject GetStopMarkedLink()
         {
-            var response = _ApiHandler.CallAction<DefaultReturnObject>(_Device, "/linkgrabberv2/getStopMark", null, JDownloaderHandler.LoginObject);
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/getStopMark", null, JDownloaderHandler.LoginObject);
 
             return (StopMarkedLinkReturnObject)response?.Data;
         }
 
+        /// <summary>
+        /// Gets all entires that are currently in the download list.
+        /// </summary>
+        /// <param name="linkQuery">An object which allows you to filter the return object.</param>
+        /// <returns>An enumerable of the DownloadLinkObject which contains infos about the entries.</returns>
+        public IEnumerable<DownloadLinkObject> QueryLinks(LinkQueryObject linkQuery)
+        {
+            string json = JsonConvert.SerializeObject(linkQuery);
+            var param = new[] { json };
+
+            var response =
+                ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadsV2/queryLinks", param,
+                    JDownloaderHandler.LoginObject, true);
+            var tmp = (JArray)response?.Data;
+            return tmp?.ToObject<IEnumerable<DownloadLinkObject>>();
+        }
+
+        /// <summary>
+        /// Gets all packages that are currently in the download list.
+        /// </summary>
+        /// <param name="linkQuery">An object which allows you to filter the return object.</param>
+        /// <returns>An enumerable of the FilePackageObject which contains infos about the packages.</returns>
+        public IEnumerable<FilePackageObject> QueryPackages(LinkQueryObject linkQuery)
+        {
+            string json = JsonConvert.SerializeObject(linkQuery);
+            var param = new[] { json };
+
+            var response =
+                ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadsV2/queryPackages", param,
+                    JDownloaderHandler.LoginObject, true);
+            var tmp = (JArray)response?.Data;
+            return tmp?.ToObject<IEnumerable<FilePackageObject>>();
+        }
     }
 }

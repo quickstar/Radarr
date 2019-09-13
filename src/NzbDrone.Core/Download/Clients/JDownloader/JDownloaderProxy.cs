@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using My.JDownloader.Api;
-using My.JDownloader.Api.Models.DownloadsV2;
-using My.JDownloader.Api.Models.LinkgrabberV2;
-using My.JDownloader.Api.Namespaces;
 using NLog;
 using NzbDrone.Common.Cache;
-using NzbDrone.Core.Download.Clients.JDownloader.Models.LinkgrabberV2;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.DownloadsV2;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.LinkgrabberV2;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader
 {

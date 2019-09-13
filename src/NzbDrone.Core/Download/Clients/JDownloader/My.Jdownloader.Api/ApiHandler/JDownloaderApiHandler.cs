@@ -16,7 +16,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
 {
     internal class JDownloaderApiHandler
     {
-        private int _requestId = (int) (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+        private int _requestId = (int)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
         private string _apiUrl = "http://api.jdownloader.org";
 
         public void SetApiUrl(string newApiUrl)
@@ -162,11 +162,6 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
             }
         }
 
-        private int GetUniqueRid()
-        {
-            return _requestId++;
-        }
-
         #region "Encrypt, Decrypt and Signature"
 
         private string GetSignature(string data, byte[] key)
@@ -253,7 +248,6 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
                     IV = iv,
                     Key = key
                 };
-
                 var ms = new MemoryStream(cypher);
                 string result;
                 using (var cs = new CryptoStream(ms, rj.CreateDecryptor(), CryptoStreamMode.Read))
@@ -263,15 +257,20 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
                         result = sr.ReadToEnd();
                     }
                 }
-
                 return result;
+
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return data;
             }
         }
 
         #endregion
+
+        private int GetUniqueRid()
+        {
+            return _requestId++;
+        }
     }
 }

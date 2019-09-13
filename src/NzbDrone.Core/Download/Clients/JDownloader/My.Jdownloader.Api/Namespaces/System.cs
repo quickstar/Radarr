@@ -6,15 +6,13 @@ using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Syste
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
-    public class System
+    public class System : Base
     {
-        private readonly JDownloaderApiHandler _ApiHandler;
-        private readonly DeviceObject _Device;
 
         internal System(JDownloaderApiHandler apiHandler, DeviceObject device)
         {
-            _ApiHandler = apiHandler;
-            _Device = device;
+            ApiHandler = apiHandler;
+            Device = device;
         }
 
         /// <summary>
@@ -22,7 +20,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// </summary>
         public void ExitJd()
         {
-            _ApiHandler.CallAction<object>(_Device, "/system/exitJD", null, JDownloaderHandler.LoginObject, true);
+            ApiHandler.CallAction<object>(Device, "/system/exitJD", null, JDownloaderHandler.LoginObject, true);
         }
 
         /// <summary>
@@ -33,7 +31,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public StorageInfoReturnObject[] GetStorageInfos(string path)
         {
             var param = new[] {path};
-            var tmp =_ApiHandler.CallAction<DefaultReturnObject>(_Device, "/system/getStorageInfos", param, JDownloaderHandler.LoginObject, true);
+            var tmp =ApiHandler.CallAction<DefaultReturnObject>(Device, "/system/getStorageInfos", param, JDownloaderHandler.LoginObject, true);
 
             var data = (JArray) tmp?.Data;
             return data?.ToObject<StorageInfoReturnObject[]>();
@@ -45,7 +43,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns></returns>
         public SystemInfoReturnObject GetSystemInfos()
         {
-            var tmp = _ApiHandler.CallAction<DefaultReturnObject>(_Device, "/system/getSystemInfos", null, JDownloaderHandler.LoginObject, true);
+            var tmp = ApiHandler.CallAction<DefaultReturnObject>(Device, "/system/getSystemInfos", null, JDownloaderHandler.LoginObject, true);
 
             var data = (JObject) tmp?.Data;
             return data?.ToObject<SystemInfoReturnObject>();
@@ -54,9 +52,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <summary>
         /// Hibernates the current os the JDownloader client is running on.
         /// </summary>
-        public void HibernateOS()
+        public void HibernateOs()
         {
-            _ApiHandler.CallAction<object>(_Device, "/system/hibernateOS", null, JDownloaderHandler.LoginObject, true);
+            ApiHandler.CallAction<object>(Device, "/system/hibernateOS", null, JDownloaderHandler.LoginObject, true);
         }
 
         /// <summary>
@@ -64,24 +62,24 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// </summary>
         public void RestartJd()
         {
-            _ApiHandler.CallAction<object>(_Device, "/system/restartJD", null, JDownloaderHandler.LoginObject, true);
+            ApiHandler.CallAction<object>(Device, "/system/restartJD", null, JDownloaderHandler.LoginObject, true);
         }
 
         /// <summary>
         /// Shutsdown the current os the JDownloader client is running on.
         /// </summary>
         /// <param name="force">True if you want to force the shutdown process.</param>
-        public void ShutdownOS(bool force)
+        public void ShutdownOs(bool force)
         {
-            _ApiHandler.CallAction<object>(_Device, "/system/shutdownOS", new [] {force}, JDownloaderHandler.LoginObject, true);
+            ApiHandler.CallAction<object>(Device, "/system/shutdownOS", new [] {force}, JDownloaderHandler.LoginObject, true);
         }
 
         /// <summary>
         /// Sets the current os the JDownloader client is running on in standby.
         /// </summary>
-        public void StandbyOS()
+        public void StandbyOs()
         {
-            _ApiHandler.CallAction<object>(_Device, "/system/standbyOS", null, JDownloaderHandler.LoginObject, true);
+            ApiHandler.CallAction<object>(Device, "/system/standbyOS", null, JDownloaderHandler.LoginObject, true);
         }
     }
 }

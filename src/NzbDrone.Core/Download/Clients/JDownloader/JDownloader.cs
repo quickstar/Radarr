@@ -1,18 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using FluentValidation.Results;
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
-using NzbDrone.Common.Http;
 using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Download.Clients.Nzbget;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
-using NzbDrone.Core.Validation;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader
 {
@@ -28,6 +24,8 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
         {
         }
 
+        public override string Name => "JDownloader";
+
         public override string Download(RemoteMovie remoteMovie)
         {
             if (Proxy.AddDlcFromUrl(remoteMovie.Release.DownloadUrl, remoteMovie.Release.Title, Settings))
@@ -37,8 +35,6 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
 
             return string.Empty;
         }
-
-        public override string Name => "JDownloader";
 
         public override IEnumerable<DownloadClientItem> GetItems()
         {
@@ -65,7 +61,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
 
         public override DownloadClientStatus GetStatus()
         {
-            return new DownloadClientStatus() { };
+            return new DownloadClientStatus();
         }
 
         protected override void Test(List<ValidationFailure> failures)

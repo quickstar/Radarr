@@ -4,15 +4,13 @@ using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devic
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
-    public class JD
+    public class Jd:Base
     {
-        private readonly JDownloaderApiHandler _ApiHandler;
-        private readonly DeviceObject _Device;
 
-        internal JD(JDownloaderApiHandler apiHandler, DeviceObject device)
+        internal Jd(JDownloaderApiHandler apiHandler, DeviceObject device)
         {
-            _ApiHandler = apiHandler;
-            _Device = device;
+            ApiHandler = apiHandler;
+            Device = device;
         }
 
         /// <summary>
@@ -20,7 +18,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// </summary>
         public void DoSomethingCool()
         {
-            var response = _ApiHandler.CallAction<object>(_Device, "/jd/doSomethingCool",
+            ApiHandler.CallAction<object>(Device, "/jd/doSomethingCool",
                 null, JDownloaderHandler.LoginObject, true);
         }
 
@@ -30,12 +28,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>Returns the core revision of the jdownloader client.</returns>
         public int GetCoreRevision()
         {
-            var response = _ApiHandler.CallAction<DefaultReturnObject>(_Device, "/jd/getCoreRevision",
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/jd/getCoreRevision",
                 null, JDownloaderHandler.LoginObject, true);
             if (response == null)
                 return -1;
 
-            return (int)response.Data;
+            return (int) response.Data;
         }
 
         /// <summary>
@@ -44,12 +42,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>True if successfull.</returns>
         public bool RefreshPlugins()
         {
-            var response = _ApiHandler.CallAction<DefaultReturnObject>(_Device, "/jd/refreshPlugins",
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/jd/refreshPlugins",
                 null, JDownloaderHandler.LoginObject, true);
             if (response == null)
                 return false;
 
-            return (bool)response.Data;
+            return (bool) response.Data;
         }
 
         /// <summary>
@@ -61,12 +59,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public int Sum(int a, int b)
         {
             var param = new[] {a, b};
-            var response = _ApiHandler.CallAction<DefaultReturnObject>(_Device, "/jd/sum",
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/jd/sum",
                 param, JDownloaderHandler.LoginObject, true);
             if (response == null)
                 return -1;
 
-            return (int)response.Data;
+            return (int) response.Data;
         }
 
         /// <summary>
@@ -75,12 +73,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>The current uptime of the JDownloader client as long.</returns>
         public long Uptime()
         {
-            var response = _ApiHandler.CallAction<DefaultReturnObject>(_Device, "/jd/uptime",
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/jd/uptime",
                 null, JDownloaderHandler.LoginObject, true);
             if (response == null)
                 return -1;
 
-            return (long)response.Data;
+            return (long) response.Data;
         }
 
         /// <summary>
@@ -89,12 +87,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>The current version of the JDownloader client.</returns>
         public long Version()
         {
-            var response = _ApiHandler.CallAction<DefaultReturnObject>(_Device, "/jd/version",
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/jd/version",
                 null, JDownloaderHandler.LoginObject, true);
             if (response == null)
                 return -1;
 
-            return (long)response.Data;
+            return (long) response.Data;
         }
     }
 }

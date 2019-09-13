@@ -4,15 +4,13 @@ using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devic
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
-    public class LinkCrawler
+    public class LinkCrawler : Base
     {
-        private readonly JDownloaderApiHandler _ApiHandler;
-        private readonly DeviceObject _Device;
 
         internal LinkCrawler(JDownloaderApiHandler apiHandler, DeviceObject device)
         {
-            _ApiHandler = apiHandler;
-            _Device = device;
+            ApiHandler = apiHandler;
+            Device = device;
         }
 
         /// <summary>
@@ -22,7 +20,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public bool IsCrawling()
         {
             var response =
-                _ApiHandler.CallAction<DefaultReturnObject>(_Device, "/linkcrawler/isCrawling", null, JDownloaderHandler.LoginObject);
+                ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkcrawler/isCrawling", null, JDownloaderHandler.LoginObject);
             if (response?.Data == null)
                 return false;
             return (bool) response.Data;
