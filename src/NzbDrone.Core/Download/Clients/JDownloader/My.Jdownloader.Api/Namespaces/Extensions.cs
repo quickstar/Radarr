@@ -1,33 +1,34 @@
 using System.Collections.Generic;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandler;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Extensions;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Login;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
     public class Extensions : Base
     {
-        internal Extensions(JDownloaderApiHandler apiHandler, DeviceObject device)
-        {
-            ApiHandler = apiHandler;
-            Device = device;
-        }
+        internal Extensions(JDownloaderApiHandler apiHandler, DeviceObject device, LoginObject loginObject)
+            : base(apiHandler, device, loginObject)
+        { }
 
         /// <summary>
         /// Installs an extension to the client.
         /// </summary>
         /// <param name="extensionId">The id of the extension you want to install</param>
         /// <returns>True if successfull</returns>
-        public bool Install( string extensionId)
+        public bool Install(string extensionId)
         {
-            var param = new[] {extensionId};
+            var param = new[] { extensionId };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/extensions/install",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
-            return response?.Data != null && (bool)response.Data;
+            return (response?.Data != null) && (bool)response.Data;
         }
 
         /// <summary>
@@ -39,9 +40,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         {
             var param = new[] { className };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/extensions/isEnabled",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
-            return response?.Data != null && (bool)response.Data;
+            return (response?.Data != null) && (bool)response.Data;
         }
 
         /// <summary>
@@ -49,13 +50,13 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// </summary>
         /// <param name="extensionId">The id of the extension you want to install.</param>
         /// <returns>True if successfull</returns>
-        public bool IsInstalled( string extensionId)
+        public bool IsInstalled(string extensionId)
         {
             var param = new[] { extensionId };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/extensions/isInstalled",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
-            return response?.Data != null && (bool)response.Data;
+            return (response?.Data != null) && (bool)response.Data;
         }
 
         /// <summary>
@@ -63,12 +64,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// </summary>
         /// <param name="requestObject">The request object which contains informations about which properties are returned.</param>
         /// <returns>An enumerable of all extensions that are available.</returns>
-        public IEnumerable<ExtensionResponseObject> List( ExtensionRequestObject requestObject)
+        public IEnumerable<ExtensionResponseObject> List(ExtensionRequestObject requestObject)
         {
             string json = JsonConvert.SerializeObject(requestObject);
             var param = new[] { json };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/extensions/list",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
             JArray tmp = (JArray)response.Data;
 
@@ -85,7 +86,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         {
             var param = new[] { className, enabled.ToString() };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/extensions/setEnabled",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
             return response?.Data != null;
         }

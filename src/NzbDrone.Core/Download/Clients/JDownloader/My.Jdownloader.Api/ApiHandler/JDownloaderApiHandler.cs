@@ -118,6 +118,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
             try
             {
                 var request = WebRequest.Create(url);
+                request.Timeout = 2000;
                 if (!string.IsNullOrEmpty(body))
                 {
                     request.Method = "POST";
@@ -295,7 +296,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
                     }
                 }
             }
-            catch (Exception e)
+            catch
             {
                 return data;
             }

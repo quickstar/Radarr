@@ -1,21 +1,21 @@
 using System.Collections.Generic;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandler;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.DownloadsV2;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Login;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
     public class DownloadsV2 : Base
     {
-
-        internal DownloadsV2(JDownloaderApiHandler apiHandler, DeviceObject device)
-        {
-            ApiHandler = apiHandler;
-            Device = device;
-        }
+        internal DownloadsV2(JDownloaderApiHandler apiHandler, DeviceObject device, LoginObject loginObject)
+            : base(apiHandler, device, loginObject)
+        { }
 
         /// <summary>
         /// Gets the stop mark as long.
@@ -23,9 +23,11 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>The stop mark as long.</returns>
         public long GetStopMark()
         {
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/getStopMark", null, JDownloaderHandler.LoginObject);
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/getStopMark", null, LoginObject);
             if (response?.Data == null)
+            {
                 return -1;
+            }
 
             return (long)response.Data;
         }
@@ -36,7 +38,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>Returns informations about a stop marked link.</returns>
         public StopMarkedLinkReturnObject GetStopMarkedLink()
         {
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/getStopMark", null, JDownloaderHandler.LoginObject);
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/getStopMark", null, LoginObject);
 
             return (StopMarkedLinkReturnObject)response?.Data;
         }
@@ -53,7 +55,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
 
             var response =
                 ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadsV2/queryLinks", param,
-                    JDownloaderHandler.LoginObject, true);
+                                                           LoginObject, true);
             var tmp = (JArray)response?.Data;
             return tmp?.ToObject<IEnumerable<DownloadLinkObject>>();
         }
@@ -68,9 +70,8 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
             string json = JsonConvert.SerializeObject(linkQuery);
             var param = new[] { json };
 
-            var response =
-                ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadsV2/queryPackages", param,
-                    JDownloaderHandler.LoginObject, true);
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadsV2/queryPackages", param,
+                                                                      LoginObject, true);
             var tmp = (JArray)response?.Data;
             return tmp?.ToObject<IEnumerable<FilePackageObject>>();
         }

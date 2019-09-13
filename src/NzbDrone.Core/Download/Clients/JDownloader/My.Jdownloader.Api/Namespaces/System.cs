@@ -1,26 +1,25 @@
 using Newtonsoft.Json.Linq;
+
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandler;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Login;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.System;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
     public class System : Base
     {
-
-        internal System(JDownloaderApiHandler apiHandler, DeviceObject device)
-        {
-            ApiHandler = apiHandler;
-            Device = device;
-        }
+        internal System(JDownloaderApiHandler apiHandler, DeviceObject device, LoginObject loginObject)
+            : base(apiHandler, device, loginObject)
+        { }
 
         /// <summary>
         /// Closes the JDownloader client.
         /// </summary>
         public void ExitJd()
         {
-            ApiHandler.CallAction<object>(Device, "/system/exitJD", null, JDownloaderHandler.LoginObject, true);
+            ApiHandler.CallAction<object>(Device, "/system/exitJD", null, LoginObject, true);
         }
 
         /// <summary>
@@ -30,10 +29,10 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>An array with storage informations.</returns>
         public StorageInfoReturnObject[] GetStorageInfos(string path)
         {
-            var param = new[] {path};
-            var tmp =ApiHandler.CallAction<DefaultReturnObject>(Device, "/system/getStorageInfos", param, JDownloaderHandler.LoginObject, true);
+            var param = new[] { path };
+            var tmp = ApiHandler.CallAction<DefaultReturnObject>(Device, "/system/getStorageInfos", param, LoginObject, true);
 
-            var data = (JArray) tmp?.Data;
+            var data = (JArray)tmp?.Data;
             return data?.ToObject<StorageInfoReturnObject[]>();
         }
 
@@ -43,9 +42,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns></returns>
         public SystemInfoReturnObject GetSystemInfos()
         {
-            var tmp = ApiHandler.CallAction<DefaultReturnObject>(Device, "/system/getSystemInfos", null, JDownloaderHandler.LoginObject, true);
+            var tmp = ApiHandler.CallAction<DefaultReturnObject>(Device, "/system/getSystemInfos", null, LoginObject, true);
 
-            var data = (JObject) tmp?.Data;
+            var data = (JObject)tmp?.Data;
             return data?.ToObject<SystemInfoReturnObject>();
         }
 
@@ -54,7 +53,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// </summary>
         public void HibernateOs()
         {
-            ApiHandler.CallAction<object>(Device, "/system/hibernateOS", null, JDownloaderHandler.LoginObject, true);
+            ApiHandler.CallAction<object>(Device, "/system/hibernateOS", null, LoginObject, true);
         }
 
         /// <summary>
@@ -62,7 +61,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// </summary>
         public void RestartJd()
         {
-            ApiHandler.CallAction<object>(Device, "/system/restartJD", null, JDownloaderHandler.LoginObject, true);
+            ApiHandler.CallAction<object>(Device, "/system/restartJD", null, LoginObject, true);
         }
 
         /// <summary>
@@ -71,7 +70,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <param name="force">True if you want to force the shutdown process.</param>
         public void ShutdownOs(bool force)
         {
-            ApiHandler.CallAction<object>(Device, "/system/shutdownOS", new [] {force}, JDownloaderHandler.LoginObject, true);
+            ApiHandler.CallAction<object>(Device, "/system/shutdownOS", new[] { force }, LoginObject, true);
         }
 
         /// <summary>
@@ -79,7 +78,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// </summary>
         public void StandbyOs()
         {
-            ApiHandler.CallAction<object>(Device, "/system/standbyOS", null, JDownloaderHandler.LoginObject, true);
+            ApiHandler.CallAction<object>(Device, "/system/standbyOS", null, LoginObject, true);
         }
     }
 }

@@ -1,21 +1,21 @@
 using System.Collections.Generic;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandler;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.AccountV2;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Login;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
     public class AccountsV2 : Base
     {
-
-        internal AccountsV2(JDownloaderApiHandler apiHandler, DeviceObject device)
-        {
-            ApiHandler = apiHandler;
-            Device = device;
-        }
+        internal AccountsV2(JDownloaderApiHandler apiHandler, DeviceObject device, LoginObject loginObject)
+            : base(apiHandler, device, loginObject)
+        { }
 
         /// <summary>
         /// Adds an premium account to your JDownloader device.
@@ -26,9 +26,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>True if the account was successfully added.</returns>
         public bool AddAccount(string hoster, string email, string password)
         {
-            var param = new[] {hoster, email, password};
+            var param = new[] { hoster, email, password };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/addAccount",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
             return response != null;
         }
@@ -41,9 +41,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public bool AddBasicAuth(BasicAuthObject requestObject)
         {
             var param = new[]
-                {requestObject.Type.ToString(), requestObject.Hostmask, requestObject.Username, requestObject.Password};
+                { requestObject.Type.ToString(), requestObject.Hostmask, requestObject.Username, requestObject.Password };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/addBasicAuth",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
             return response != null;
         }
@@ -55,9 +55,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>True if succesfull</returns>
         public bool DisableAccounts(long[] accountIds)
         {
-            var param = new[] {accountIds};
+            var param = new[] { accountIds };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/disableAccounts",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
             return response != null;
         }
@@ -69,9 +69,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>True if succesfull</returns>
         public bool EnableAccounts(long[] accountIds)
         {
-            var param = new[] {accountIds};
+            var param = new[] { accountIds };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/enableAccounts",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
             return response != null;
         }
@@ -83,11 +83,14 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>The url of the hoster.</returns>
         public string GetPremiumHosterUrl(string hoster)
         {
-            var param = new[] {hoster};
+            var param = new[] { hoster };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/getPremiumHosterUrl",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
             if (response?.Data != null)
+            {
                 return response.Data.ToString();
+            }
+
             return "";
         }
 
@@ -99,10 +102,10 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public IEnumerable<ListAccountResponseObject> ListAccounts(ListAccountRequestObject requestObject)
         {
             string json = JsonConvert.SerializeObject(requestObject);
-            var param = new[] {json};
+            var param = new[] { json };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/listAccounts", param,
-                JDownloaderHandler.LoginObject, true);
-            JArray tmp = (JArray) response.Data;
+                                                                      LoginObject, true);
+            JArray tmp = (JArray)response.Data;
 
             return tmp.ToObject<IEnumerable<ListAccountResponseObject>>();
         }
@@ -114,10 +117,10 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public IEnumerable<ListBasicAuthResponseObject> ListBasicAuth()
         {
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/listBasicAuth", null,
-                JDownloaderHandler.LoginObject, true);
-            JArray tmp = (JArray) response.Data;
+                                                                      LoginObject, true);
+            JArray tmp = (JArray)response.Data;
 
-            return tmp.ToObject<IEnumerable<ListBasicAuthResponseObject>> ();
+            return tmp.ToObject<IEnumerable<ListBasicAuthResponseObject>>();
         }
 
         /// <summary>
@@ -127,8 +130,8 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public IEnumerable<string> ListPremiumHoster()
         {
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/listPremiumHoster", null,
-                JDownloaderHandler.LoginObject, true);
-            var tmp = ((JArray) response.Data);
+                                                                      LoginObject, true);
+            var tmp = ((JArray)response.Data);
             return tmp?.ToObject<IEnumerable<string>>();
         }
 
@@ -139,11 +142,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public Dictionary<string, string> ListPremiumHosterUrls()
         {
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/listPremiumHosterUrls",
-                null,
-                JDownloaderHandler.LoginObject, true);
-            var tmp = ((JObject) response.Data);
+                                                                      null, LoginObject, true);
+            var tmp = ((JObject)response.Data);
             if (tmp != null)
+            {
                 return tmp.ToObject<Dictionary<string, string>>();
+            }
 
             return new Dictionary<string, string>();
         }
@@ -155,9 +159,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>True if successfull</returns>
         public bool RefreshAccounts(long[] accountIds)
         {
-            var param = new[] {accountIds};
+            var param = new[] { accountIds };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/refreshAccounts",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
             return response != null;
         }
@@ -169,9 +173,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>True if successfull.</returns>
         public bool RemoveAccounts(long[] accountIds)
         {
-            var param = new[] {accountIds};
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device,"/accountsV2/removeAccounts",
-                param, JDownloaderHandler.LoginObject, true);
+            var param = new[] { accountIds };
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/removeAccounts",
+                                                                      param, LoginObject, true);
 
             return response != null;
         }
@@ -183,9 +187,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>True if successfull.</returns>
         public bool RemoveBasicAuths(long[] basicAuthIds)
         {
-            var param = new[] {basicAuthIds};
+            var param = new[] { basicAuthIds };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/removeBasicAuths",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
             return response != null;
         }
@@ -199,9 +203,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>Ture if successfull</returns>
         public bool SetUsernameAndPassword(long accountId, string email, string password)
         {
-            var param = new[] {accountId.ToString(), email, password};
+            var param = new[] { accountId.ToString(), email, password };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/setUserNameAndPassword",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
             return response != null;
         }
@@ -213,9 +217,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>True if successfull.</returns>
         public bool UpdateBasicAuth(BasicAuthObject requestObject)
         {
-            var param = new[] {  JsonConvert.SerializeObject(requestObject)};
+            var param = new[] { JsonConvert.SerializeObject(requestObject) };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/accountsV2/updateBasicAuth",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
             return response != null;
         }

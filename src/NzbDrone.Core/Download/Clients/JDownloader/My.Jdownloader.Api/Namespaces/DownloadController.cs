@@ -1,17 +1,15 @@
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandler;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Login;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
     public class DownloadController : Base
     {
-
-        internal DownloadController(JDownloaderApiHandler apiHandler, DeviceObject device)
-        {
-            ApiHandler = apiHandler;
-            Device = device;
-        }
+        internal DownloadController(JDownloaderApiHandler apiHandler, DeviceObject device, LoginObject loginObject)
+            : base(apiHandler, device, loginObject)
+        { }
 
         /// <summary>
         /// Forces JDownloader to start downloading the given links/packages
@@ -21,8 +19,8 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>True if successfull</returns>
         public bool ForceDownload(long[] linkIds, long[] packageIds)
         {
-            var param = new[] {linkIds, packageIds};
-            var result = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadcontroller/forceDownload", param, JDownloaderHandler.LoginObject, true);
+            var param = new[] { linkIds, packageIds };
+            var result = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadcontroller/forceDownload", param, LoginObject, true);
             return result != null;
         }
 
@@ -32,9 +30,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>The current state of the device.</returns>
         public string GetCurrentState()
         {
-            var result = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadcontroller/getCurrentState", null, JDownloaderHandler.LoginObject, true);
+            var result = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadcontroller/getCurrentState", null, LoginObject, true);
             if (result != null)
+            {
                 return (string)result.Data;
+            }
+
             return "UNKOWN_STATE";
         }
 
@@ -44,34 +45,13 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>The actual download speed.</returns>
         public long GetSpeedInBps()
         {
-            var result = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadcontroller/getSpeedInBps", null, JDownloaderHandler.LoginObject, true);
+            var result = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadcontroller/getSpeedInBps", null, LoginObject, true);
             if (result != null)
+            {
                 return (long)result.Data;
+            }
+
             return 0;
-        }
-
-        /// <summary>
-        /// Starts all downloads.
-        /// </summary>
-        /// <returns>True if successfull.</returns>
-        public bool Start()
-        {
-            var result = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadcontroller/stop", null, JDownloaderHandler.LoginObject, true);
-            if (result != null)
-                return (bool) result.Data;
-            return false;
-        }
-
-        /// <summary>
-        /// Stops all downloads.
-        /// </summary>
-        /// <returns>True if successfull.</returns>
-        public bool Stop()
-        {
-            var result = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadcontroller/start", null, JDownloaderHandler.LoginObject, true);
-            if (result != null)
-                return (bool)result.Data;
-            return false;
         }
 
         /// <summary>
@@ -81,10 +61,43 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>True if successfull.</returns>
         public bool Pause(bool pause)
         {
-            var param = new[] {pause};
-            var result = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadcontroller/pause", param, JDownloaderHandler.LoginObject, true);
+            var param = new[] { pause };
+            var result = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadcontroller/pause", param, LoginObject, true);
             if (result != null)
+            {
                 return (bool)result.Data;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Starts all downloads.
+        /// </summary>
+        /// <returns>True if successfull.</returns>
+        public bool Start()
+        {
+            var result = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadcontroller/stop", null, LoginObject, true);
+            if (result != null)
+            {
+                return (bool)result.Data;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Stops all downloads.
+        /// </summary>
+        /// <returns>True if successfull.</returns>
+        public bool Stop()
+        {
+            var result = ApiHandler.CallAction<DefaultReturnObject>(Device, "/downloadcontroller/start", null, LoginObject, true);
+            if (result != null)
+            {
+                return (bool)result.Data;
+            }
+
             return false;
         }
     }

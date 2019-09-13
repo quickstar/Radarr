@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Web;
+
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandler;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Login;
@@ -8,22 +9,13 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api
 {
     public class JDownloaderHandler
     {
-        internal static LoginObject LoginObject;
-
         private readonly JDownloaderApiHandler _apiHandler = new JDownloaderApiHandler();
         private byte[] _deviceSecret;
+        private LoginObject _loginObject;
         private byte[] _loginSecret;
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="appkey">The name of the app. Should be unique!</param>
-        public JDownloaderHandler(string appkey)
-        {
-            Utils.AppKey = appkey;
-        }
-
-        /// <summary>
+        /// Initializes the DownloadHandler, and tries to connect immediately.
         /// </summary>
         /// <param name="email">Your email of your my.jdownloader.org account.</param>
         /// <param name="password">Your password of your my.jdownloader.org account.</param>
@@ -37,27 +29,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api
         public bool IsConnected { get; set; }
 
         /// <summary>
-        /// Lists all Devices which are currently connected to your my.jdownloader.org account.
-        /// </summary>
-        /// <returns>Returns an enumerable of your currently connected devices.</returns>
-        public IEnumerable<DeviceObject> GetDevices()
-        {
-            List<DeviceObject> devices = new List<DeviceObject>();
-            string query = $"/my/listdevices?sessiontoken={HttpUtility.UrlEncode(LoginObject.SessionToken)}";
-            var response = _apiHandler.CallServer<DeviceJsonReturnObject>(query, LoginObject.ServerEncryptionToken);
-            if (response == null)
-                return devices;
-
-            foreach (DeviceObject device in response.Devices)
-            {
-                devices.Add(device);
-            }
-
-            return devices;
-        }
-
-        /// <summary>
-        /// Creates an instance of the DeviceHandler class. 
+        /// Creates an instance of the DeviceHandler class.
         /// This is neccessary to call methods!
         /// </summary>
         /// <param name="device">The device you want to call the methods on.</param>
@@ -68,10 +40,33 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api
             {
                 //TODO: Make it possible to directly connect to the jdownloader client. If it's not working use the relay server.
                 //var tmp = _apiHandler.CallAction<DefaultReturnObject>(device, "/device/getDirectConnectionInfos",
-                //    null, LoginObject, true);
-                return new DeviceHandler(device, _apiHandler, LoginObject, useJdownloaderApi);
+                //    null, _loginObject, true);
+                return new DeviceHandler(_apiHandler, device, _loginObject, useJdownloaderApi);
             }
+
             return null;
+        }
+
+        /// <summary>
+        /// Lists all Devices which are currently connected to your my.jdownloader.org account.
+        /// </summary>
+        /// <returns>Returns an enumerable of your currently connected devices.</returns>
+        public IEnumerable<DeviceObject> GetDevices()
+        {
+            List<DeviceObject> devices = new List<DeviceObject>();
+            string query = $"/my/listdevices?sessiontoken={HttpUtility.UrlEncode(_loginObject.SessionToken)}";
+            var response = _apiHandler.CallServer<DeviceJsonReturnObject>(query, _loginObject.ServerEncryptionToken);
+            if (response == null)
+            {
+                return devices;
+            }
+
+            foreach (DeviceObject device in response.Devices)
+            {
+                devices.Add(device);
+            }
+
+            return devices;
         }
 
         #region "Connection methods"
@@ -96,14 +91,17 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api
 
             //If the response is null the connection was not successfull
             if (response == null)
+            {
                 return false;
+            }
 
             //Else we are saving the response which contains the SessionToken, RegainToken and the RequestId
-            LoginObject = response;
-            LoginObject.Email = email;
-            LoginObject.Password = password;
-            LoginObject.ServerEncryptionToken = Utils.UpdateEncryptionToken(_loginSecret, LoginObject.SessionToken);
-            LoginObject.DeviceEncryptionToken = Utils.UpdateEncryptionToken(_deviceSecret, LoginObject.SessionToken);
+            _loginObject = response;
+            _loginObject.Email = email;
+            _loginObject.Password = password;
+            _loginObject.ServerEncryptionToken = Utils.UpdateEncryptionToken(_loginSecret, _loginObject.SessionToken);
+            _loginObject.DeviceEncryptionToken = Utils.UpdateEncryptionToken(_deviceSecret, _loginObject.SessionToken);
+
             IsConnected = true;
             return true;
         }
@@ -114,14 +112,16 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api
         /// <returns>True if successful else false</returns>
         public bool Reconnect()
         {
-            string query = $"/my/reconnect?appkey{HttpUtility.UrlEncode(Utils.AppKey)}&sessiontoken={HttpUtility.UrlEncode(LoginObject.SessionToken)}&regaintoken={HttpUtility.UrlEncode(LoginObject.RegainToken)}";
-            var response = _apiHandler.CallServer<LoginObject>(query, LoginObject.ServerEncryptionToken);
+            string query = $"/my/reconnect?appkey{HttpUtility.UrlEncode(Utils.AppKey)}&sessiontoken={HttpUtility.UrlEncode(_loginObject.SessionToken)}&regaintoken={HttpUtility.UrlEncode(_loginObject.RegainToken)}";
+            var response = _apiHandler.CallServer<LoginObject>(query, _loginObject.ServerEncryptionToken);
             if (response == null)
+            {
                 return false;
+            }
 
-            LoginObject = response;
-            LoginObject.ServerEncryptionToken = Utils.UpdateEncryptionToken(_loginSecret, LoginObject.SessionToken);
-            LoginObject.DeviceEncryptionToken = Utils.UpdateEncryptionToken(_deviceSecret, LoginObject.SessionToken);
+            _loginObject = response;
+            _loginObject.ServerEncryptionToken = Utils.UpdateEncryptionToken(_loginSecret, _loginObject.SessionToken);
+            _loginObject.DeviceEncryptionToken = Utils.UpdateEncryptionToken(_deviceSecret, _loginObject.SessionToken);
             IsConnected = true;
             return IsConnected;
         }
@@ -132,12 +132,14 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api
         /// <returns>True if successful else false</returns>
         public bool Disconnect()
         {
-            string query = $"/my/disconnect?sessiontoken={HttpUtility.UrlEncode(LoginObject.SessionToken)}";
-            var response = _apiHandler.CallServer<object>(query, LoginObject.ServerEncryptionToken);
+            string query = $"/my/disconnect?sessiontoken={HttpUtility.UrlEncode(_loginObject.SessionToken)}";
+            var response = _apiHandler.CallServer<object>(query, _loginObject.ServerEncryptionToken);
             if (response == null)
+            {
                 return false;
+            }
 
-            LoginObject = null;
+            _loginObject = null;
             return true;
         }
 

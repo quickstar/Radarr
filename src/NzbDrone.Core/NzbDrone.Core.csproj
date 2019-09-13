@@ -152,6 +152,7 @@
     <Compile Include="DecisionEngine\Specifications\CustomFormatAllowedByProfileSpecification.cs" />
     <Compile Include="DecisionEngine\Specifications\MaximumSizeSpecification.cs" />
     <Compile Include="DecisionEngine\Specifications\RequiredIndexerFlagsSpecification.cs" />
+    <Compile Include="Download\Clients\JDownloader\IJDownloaderProxy.cs" />
     <Compile Include="Download\Clients\JDownloader\My.Jdownloader.Api\ApiHandler\JDownloaderApiHandler.cs" />
     <Compile Include="Download\Clients\JDownloader\My.Jdownloader.Api\Models\Accounts\Account.cs" />
     <Compile Include="Download\Clients\JDownloader\My.Jdownloader.Api\Models\Accounts\ApiQuery.cs" />

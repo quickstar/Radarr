@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+
 using NLog;
+
 using NzbDrone.Common.Cache;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.DownloadsV2;
@@ -10,15 +12,6 @@ using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader
 {
-    public interface IJDownloaderProxy
-    {
-        bool AddDlcFromUrl(string dlcLink, string packageName, JDownloaderSettings settings);
-        void CheckPackage(JDownloaderSettings settings, string releaseTitle);
-        IEnumerable<FilePackageObject> GetDownloadQueue(JDownloaderSettings settings);
-        string GetVersion(JDownloaderSettings settings);
-        string GetGlobalStatus(JDownloaderSettings settings);
-    }
-
     public class JDownloaderProxy : IJDownloaderProxy
     {
         private readonly Logger _logger;
@@ -46,31 +39,6 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
                 PackageName = packageName
             };
             return deviceHandler.LinkgrabberV2.AddLinks(addLink);
-        }
-
-        public string GetVersion(JDownloaderSettings settings)
-        {
-            var deviceHandler = GetDeviceHandler(settings);
-            if (deviceHandler == null)
-            {
-                return "0";
-            }
-            var version = deviceHandler.Jd.Version().ToString();
-            return version;
-        }
-
-        public string GetGlobalStatus(JDownloaderSettings settings)
-        {
-            var deviceHandler = GetDeviceHandler(settings);
-            if (deviceHandler == null)
-            {
-                return "0";
-            }
-
-            var deviceStatus = deviceHandler.System.Device.Status;
-            var state2 = deviceHandler.DownloadController.GetCurrentState();
-
-            return state2;
         }
 
         public void CheckPackage(JDownloaderSettings settings, string packageName)
@@ -114,6 +82,31 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
 
             var packages = deviceHandler.DownloadsV2.QueryPackages(new LinkQueryObject());
             return packages;
+        }
+
+        public string GetGlobalStatus(JDownloaderSettings settings)
+        {
+            var deviceHandler = GetDeviceHandler(settings);
+            if (deviceHandler == null)
+            {
+                return "0";
+            }
+
+            var state = deviceHandler.DownloadController.GetCurrentState();
+
+            return state;
+        }
+
+        public string GetVersion(JDownloaderSettings settings)
+        {
+            var deviceHandler = GetDeviceHandler(settings);
+            if (deviceHandler == null)
+            {
+                return "0";
+            }
+
+            var version = deviceHandler.Jd.Version().ToString();
+            return version;
         }
 
         private DeviceHandler GetDeviceHandler(JDownloaderSettings settings)

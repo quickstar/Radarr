@@ -1,16 +1,15 @@
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandler;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Login;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
     public class CaptchaForward : Base
     {
-        internal CaptchaForward(JDownloaderApiHandler apiHandler, DeviceObject device)
-        {
-            ApiHandler = apiHandler;
-            Device = device;
-        }
+        internal CaptchaForward(JDownloaderApiHandler apiHandler, DeviceObject device, LoginObject loginObject)
+            : base(apiHandler, device, loginObject)
+        { }
 
         /// <summary>
         /// Creates a recaptcha job.
@@ -23,12 +22,13 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>Propably the id of the created job.</returns>
         public long CreateJobRecaptchaV2(string one, string two, string three, string four)
         {
-            var param = new [] {one,two,three,four };
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/captchaforward/createJobRecaptchaV2",
-                param, JDownloaderHandler.LoginObject, true);
+            var param = new[] { one, two, three, four };
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/captchaforward/createJobRecaptchaV2", param, LoginObject, true);
 
             if (response?.Data != null)
+            {
                 return (long)response.Data;
+            }
 
             return -1;
         }
@@ -41,11 +41,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public string GetResult(long id)
         {
             var param = new[] { id };
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/captchaforward/getResult",
-                param, JDownloaderHandler.LoginObject, true);
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/captchaforward/getResult", param, LoginObject, true);
 
             if (response?.Data != null)
+            {
                 return response.Data.ToString();
+            }
 
             return string.Empty;
         }

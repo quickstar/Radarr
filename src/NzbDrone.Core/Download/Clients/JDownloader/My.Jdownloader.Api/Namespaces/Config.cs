@@ -1,20 +1,21 @@
 using System.Collections.Generic;
+
 using Newtonsoft.Json.Linq;
+
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandler;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Config;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Login;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
     public class Config : Base
     {
-        internal Config(JDownloaderApiHandler apiHandler, DeviceObject device)
-        {
-            ApiHandler = apiHandler;
-            Device = device;
-        }
-        
+        internal Config(JDownloaderApiHandler apiHandler, DeviceObject device, LoginObject loginObject)
+            : base(apiHandler, device, loginObject)
+        { }
+
         /// <summary>
         /// Gets the value of the given interface
         /// </summary>
@@ -24,9 +25,8 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>The value of the given interface.</returns>
         public object Get(string interfaceName, string storage, string key)
         {
-            var param = new[] { interfaceName,storage,key };
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/get",
-                param, JDownloaderHandler.LoginObject, true);
+            var param = new[] { interfaceName, storage, key };
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/get", param, LoginObject, true);
 
             return response?.Data;
         }
@@ -41,8 +41,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public object GetDefault(string interfaceName, string storage, string key)
         {
             var param = new[] { interfaceName, storage, key };
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/get",
-                param, JDownloaderHandler.LoginObject, true);
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/get", param, LoginObject, true);
 
             return response?.Data;
         }
@@ -53,8 +52,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>An enumerable with all available config entries.</returns>
         public IEnumerable<AdvancedConfigApiEntry> List()
         {
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/list",
-                null, JDownloaderHandler.LoginObject, true);
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/list", null, LoginObject, true);
             var tmp = ((JArray)response.Data);
 
             return tmp?.ToObject<IEnumerable<AdvancedConfigApiEntry>>();
@@ -69,11 +67,11 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <param name="returnDefaultValues">True if you want the default values.</param>
         /// <param name="returnEnumInfo">True if you want the enum infos</param>
         /// <returns>An enumerable with all available config entries based on the regex pattern.</returns>
-        public IEnumerable<AdvancedConfigApiEntry> List(string pattern, bool returnDescription,bool returnValues, bool returnDefaultValues, bool returnEnumInfo)
+        public IEnumerable<AdvancedConfigApiEntry> List(string pattern, bool returnDescription, bool returnValues, bool returnDefaultValues, bool returnEnumInfo)
         {
-            var param = new object[] {pattern, returnDescription, returnValues, returnDefaultValues, returnEnumInfo};
+            var param = new object[] { pattern, returnDescription, returnValues, returnDefaultValues, returnEnumInfo };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/list",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
             var tmp = ((JArray)response.Data);
 
             return tmp?.ToObject<IEnumerable<AdvancedConfigApiEntry>>();
@@ -86,9 +84,8 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>An enumerable with all possible enum values.</returns>
         public IEnumerable<EnumOption> ListEnum(string type)
         {
-            var param = new [] { type };
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/listEnum",
-                param, JDownloaderHandler.LoginObject, true);
+            var param = new[] { type };
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/listEnum", param, LoginObject, true);
             var tmp = ((JArray)response.Data);
 
             return tmp?.ToObject<IEnumerable<EnumOption>>();
@@ -101,9 +98,8 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>An enumerable with all available config entries based on the query object.</returns>
         public IEnumerable<AdvancedConfigApiEntry> Query(AdvancedConfigQuery query)
         {
-            var param = new[] {query};
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/query",
-                null, JDownloaderHandler.LoginObject, true);
+            var param = new[] { query };
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/query", null, LoginObject, true);
             var tmp = ((JArray)response.Data);
 
             return tmp?.ToObject<IEnumerable<AdvancedConfigApiEntry>>();
@@ -119,10 +115,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public bool Reset(string interfaceName, string storage, string key)
         {
             var param = new[] { interfaceName, storage, key };
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/reset",
-                param, JDownloaderHandler.LoginObject, true);
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/reset", param, LoginObject, true);
 
-            return response?.Data != null && (bool)response?.Data;
+            return (response?.Data != null) && (bool)response?.Data;
         }
 
         /// <summary>
@@ -135,11 +130,10 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>True if successful.</returns>
         public bool Set(string interfaceName, string storage, string key, object value)
         {
-            var param = new object[] { interfaceName, storage, key, value };
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/set",
-                param, JDownloaderHandler.LoginObject, true);
+            var param = new[] { interfaceName, storage, key, value };
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/config/set", param, LoginObject, true);
 
-            return response?.Data != null && (bool)response?.Data;
+            return (response?.Data != null) && (bool)response?.Data;
         }
     }
 }

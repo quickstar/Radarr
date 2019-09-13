@@ -1,19 +1,20 @@
 using System.Collections.Generic;
+
 using Newtonsoft.Json.Linq;
+
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandler;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Extraction;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Login;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
     public class Extraction : Base
     {
-        internal Extraction(JDownloaderApiHandler apiHandler, DeviceObject device)
-        {
-            ApiHandler = apiHandler;
-            Device = device;
-        }
+        internal Extraction(JDownloaderApiHandler apiHandler, DeviceObject device, LoginObject loginObject)
+            : base(apiHandler, device, loginObject)
+        { }
 
         /// <summary>
         /// Adds an archive password to the client.
@@ -22,9 +23,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>True if successfull.</returns>
         public bool AddArchivePassword(string password)
         {
-            var param = new[] {password};
+            var param = new[] { password };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/extraction/addArchivePassword",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
             return response?.Data != null;
         }
@@ -38,9 +39,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         {
             var param = new[] { controllerId };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/extraction/cancelExtraction",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
-            return response?.Data != null && (bool)response.Data;
+            return (response?.Data != null) && (bool)response.Data;
         }
 
         /// <summary>
@@ -51,9 +52,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns>An enumerable which contains all the archive statuses.</returns>
         public IEnumerable<ArchiveStatus> GetArchiveInfo(long[] linkIds, long[] packageIds)
         {
-            var param = new[] { linkIds,packageIds };
+            var param = new[] { linkIds, packageIds };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/extraction/getArchiveInfo",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
             JArray tmp = (JArray)response.Data;
 
             return tmp.ToObject<IEnumerable<ArchiveStatus>>();
@@ -68,7 +69,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         {
             var param = new[] { archiveIds };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/extraction/getArchiveSettings",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
             JArray tmp = (JArray)response.Data;
 
             return tmp.ToObject<IEnumerable<ArchiveSettings>>();
@@ -81,7 +82,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public IEnumerable<ArchiveStatus> GetQueue()
         {
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/extraction/getQueue",
-                null, JDownloaderHandler.LoginObject, true);
+                                                                      null, LoginObject, true);
             JArray tmp = (JArray)response.Data;
 
             return tmp.ToObject<IEnumerable<ArchiveStatus>>();
@@ -97,9 +98,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         {
             var param = new object[] { archiveId, archiveSettings };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/extraction/setArchiveSettings",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
-            return response?.Data != null && (bool)response.Data;
+            return (response?.Data != null) && (bool)response.Data;
         }
 
         /// <summary>
@@ -108,14 +109,16 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <param name="linkIds">The ids of the links you want to start the extraction.</param>
         /// <param name="packageIds">The ids of the packages you want to start the extraction.</param>
         /// <returns>A dictionary which contains the archive id as the key and the extraction status as value.</returns>
-        public Dictionary<string,bool?> StartExtractionNow(long[] linkIds, long[] packageIds)
+        public Dictionary<string, bool?> StartExtractionNow(long[] linkIds, long[] packageIds)
         {
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/extraction/startExtractionNow",
-                null, JDownloaderHandler.LoginObject, true);
+                                                                      null, LoginObject, true);
 
             var tmp = ((JObject)response.Data);
             if (tmp != null)
+            {
                 return tmp.ToObject<Dictionary<string, bool?>>();
+            }
 
             return new Dictionary<string, bool?>();
         }

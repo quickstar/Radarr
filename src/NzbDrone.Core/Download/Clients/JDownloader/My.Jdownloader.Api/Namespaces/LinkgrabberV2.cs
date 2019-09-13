@@ -1,20 +1,21 @@
 using System.Collections.Generic;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandler;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.LinkgrabberV2;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Login;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces
 {
     public class LinkGrabberV2 : Base
     {
-        internal LinkGrabberV2(JDownloaderApiHandler apiHandler, DeviceObject device)
-        {
-            ApiHandler = apiHandler;
-            Device = device;
-        }
+        internal LinkGrabberV2(JDownloaderApiHandler apiHandler, DeviceObject device, LoginObject loginObject)
+            : base(apiHandler, device, loginObject)
+        { }
 
         /// <summary>
         /// Aborts the linkgrabber process.
@@ -34,12 +35,17 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         {
             var param = new[] { jobId };
             if (jobId == -1)
+            {
                 param = null;
+            }
 
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/abort",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
 
-            if (response?.Data == null) return false;
+            if (response?.Data == null)
+            {
+                return false;
+            }
 
             return (bool)response.Data;
         }
@@ -60,7 +66,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
             var json = JsonConvert.SerializeObject(containerObject);
             var param = new[] { json };
             var response = ApiHandler.CallAction<object>(Device, "/linkgrabberv2/addContainer",
-                param, JDownloaderHandler.LoginObject);
+                                                         param, LoginObject);
             return response != null;
         }
 
@@ -74,7 +80,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
             var json = JsonConvert.SerializeObject(requestObject);
             var param = new[] { json };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/addLinks",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
             return response != null;
         }
 
@@ -87,12 +93,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <param name="variantId"></param>
         /// <returns>True if successfull.</returns>
         public bool AddVariantCopy(long linkId, long destinationAfterLinkId, long destinationPackageId,
-            string variantId)
+                                   string variantId)
         {
             var param = new[]
-                {linkId.ToString(), destinationAfterLinkId.ToString(), destinationPackageId.ToString(), variantId};
+                { linkId.ToString(), destinationAfterLinkId.ToString(), destinationPackageId.ToString(), variantId };
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/addVariantCopy",
-                param, JDownloaderHandler.LoginObject, true);
+                                                                      param, LoginObject, true);
             return response != null;
         }
 
@@ -106,14 +112,16 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <param name="selection">The selection Type.</param>
         /// <returns>True if successfull.</returns>
         public bool CleanUp(long[] linkIds, long[] packageIds, CleanUpActionType action, CleanUpModeType mode,
-            CleanUpSelectionType selection)
+                            CleanUpSelectionType selection)
         {
             var param = new object[] { linkIds, packageIds, action, mode, selection };
             var response =
-                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/cleanUp", param,
-                    JDownloaderHandler.LoginObject);
+                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/cleanUp", param, LoginObject);
             if (response == null)
+            {
                 return false;
+            }
+
             return true;
         }
 
@@ -124,10 +132,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public bool ClearList()
         {
             var response =
-                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/clearList", null,
-                    JDownloaderHandler.LoginObject);
+                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/clearList", null, LoginObject);
             if (response == null)
+            {
                 return false;
+            }
+
             return true;
         }
 
@@ -140,10 +150,13 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         {
             var response =
                 ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/getChildrenChanged", null,
-                    JDownloaderHandler.LoginObject);
+                                                           LoginObject);
 
             if (response?.Data != null)
+            {
                 return (long)response.Data;
+            }
+
             return -1;
         }
 
@@ -154,7 +167,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public string[] GetDownloadFolderHistorySelectionBase()
         {
             var response = ApiHandler.CallAction<DefaultReturnObject>(Device,
-                "/linkgrabberv2/getDownloadFolderHistorySelectionBase", null, JDownloaderHandler.LoginObject);
+                                                                      "/linkgrabberv2/getDownloadFolderHistorySelectionBase", null, LoginObject);
 
             var tmp = (JArray)response?.Data;
             return tmp?.ToObject<string[]>();
@@ -162,7 +175,6 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
 
         // TODO: Describe what this function does.
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="links"></param>
         /// <param name="afterLinkId"></param>
@@ -170,8 +182,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         /// <returns></returns>
         public Dictionary<string, List<long>> GetDownloadUrls(long[] links, long afterLinkId, long destPackageId)
         {
-            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/getDownloadUrls", null,
-                JDownloaderHandler.LoginObject);
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/getDownloadUrls", null, LoginObject);
 
             var tmp = (JObject)response?.Data;
             return tmp?.ToObject<Dictionary<string, List<long>>>();
@@ -185,9 +196,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         {
             var response =
                 ApiHandler.CallAction<dynamic>(Device, "/linkgrabberv2/getPackageCount", null,
-                    JDownloaderHandler.LoginObject, true);
+                                               LoginObject, true);
             if (response == null)
+            {
                 return 0;
+            }
+
             return response.data;
         }
 
@@ -199,8 +213,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public IEnumerable<GetVariantsReturnObject> GetVariants(long linkId)
         {
             var response =
-                ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/getVariants", null,
-                    JDownloaderHandler.LoginObject);
+                ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/getVariants", null, LoginObject);
 
             var tmp = (JArray)response?.Data;
             return tmp?.ToObject<IEnumerable<GetVariantsReturnObject>>();
@@ -213,11 +226,11 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public bool IsCollecting()
         {
             var response =
-                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/isCollection", null,
-                    JDownloaderHandler.LoginObject);
-            if (response == null)
-                return false;
-            return true;
+                ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/isCollecting", null,
+                    LoginObject, true);
+
+            var isCollecting = response?.Data != null && (bool)response?.Data;
+            return isCollecting;
         }
 
         /// <summary>
@@ -232,10 +245,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
             var param = new object[] { linkIds, afterLinkId, destPackageId };
 
             var response =
-                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/moveLinks", param,
-                    JDownloaderHandler.LoginObject);
+                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/moveLinks", param, LoginObject);
             if (response == null)
+            {
                 return false;
+            }
+
             return true;
         }
 
@@ -250,10 +265,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
             var param = new object[] { packageIds, afterDestPackageId };
 
             var response =
-                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/movePackages", param,
-                    JDownloaderHandler.LoginObject);
+                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/movePackages", param, LoginObject);
             if (response == null)
+            {
                 return false;
+            }
+
             return true;
         }
 
@@ -268,10 +285,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
             var param = new[] { linkIds, packageIds };
 
             var response =
-                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/moveToDownloadlist", param,
-                    JDownloaderHandler.LoginObject);
+                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/moveToDownloadlist", param, LoginObject);
             if (response == null)
+            {
                 return false;
+            }
+
             return true;
         }
 
@@ -288,10 +307,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
             var param = new object[] { linkIds, packageIds, newPackageName, downloadPath };
 
             var response =
-                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/moveToNewPackage", param,
-                    JDownloaderHandler.LoginObject);
+                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/moveToNewPackage", param, LoginObject);
             if (response == null)
+            {
                 return false;
+            }
+
             return true;
         }
 
@@ -308,14 +329,15 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
                 Url = true
             };
             if (maxResults > 0)
+            {
                 queryLink.MaxResults = maxResults;
+            }
 
             string json = JsonConvert.SerializeObject(queryLink);
             var param = new[] { json };
 
             var response =
-                ApiHandler.CallAction<CrawledLinkObject>(Device, "/linkgrabberv2/queryLinks", param,
-                    JDownloaderHandler.LoginObject, true);
+                ApiHandler.CallAction<CrawledLinkObject>(Device, "/linkgrabberv2/queryLinks", param, LoginObject, true);
             return response?.Data;
         }
 
@@ -330,8 +352,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
             var param = new[] { json };
 
             var response =
-                ApiHandler.CallAction<QueryPackagesObject>(Device, "/linkgrabberv2/queryPackages", param,
-                    JDownloaderHandler.LoginObject, true);
+                ApiHandler.CallAction<QueryPackagesObject>(Device, "/linkgrabberv2/queryPackages", param, LoginObject, true);
             return response?.Data;
         }
 
@@ -345,9 +366,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         {
             var param = new object[] { packageId, newName };
 
-            var response =
-                ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/renamePackage", param,
-                    JDownloaderHandler.LoginObject, true);
+            var response = ApiHandler.CallAction<DefaultReturnObject>(Device, "/linkgrabberv2/renamePackage", param, LoginObject, true);
 
             var renameSuccess = string.IsNullOrEmpty(response?.Data.ToString());
             return renameSuccess;
@@ -362,9 +381,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespac
         public bool SetDownloadDirectory(string directory, long[] packageIds)
         {
             var param = new object[] { directory, packageIds };
-            var response =
-                ApiHandler.CallAction<object>(Device, "/linkgrabberv2/setDownloadDirectory", param,
-                    JDownloaderHandler.LoginObject, true);
+            var response = ApiHandler.CallAction<object>(Device, "/linkgrabberv2/setDownloadDirectory", param, LoginObject, true);
             return response != null;
         }
     }
