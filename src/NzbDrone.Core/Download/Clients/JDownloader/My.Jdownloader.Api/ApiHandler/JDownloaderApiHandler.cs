@@ -6,7 +6,9 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+
 using Newtonsoft.Json;
+
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Exceptions;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Action;
 using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.Devices;
@@ -16,54 +18,22 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
 {
     internal class JDownloaderApiHandler
     {
-        private int _requestId = (int)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
         private string _apiUrl = "http://api.jdownloader.org";
-
-        public void SetApiUrl(string newApiUrl)
-        {
-            _apiUrl = newApiUrl;
-        }
-
-        public T CallServer<T>(string query, byte[] key, string param = "")
-        {
-            string rid;
-            if (!string.IsNullOrEmpty(param))
-            {
-                if (key != null)
-                {
-                    param = Encrypt(param, key);
-                }
-                rid = _requestId.ToString();
-            }
-            else
-            {
-                rid = GetUniqueRid().ToString();
-            }
-            if (query.Contains("?"))
-                query += "&";
-            else
-                query += "?";
-            query += "rid=" + rid;
-            string signature = GetSignature(query, key);
-            query += "&signature=" + signature;
-
-            string url = _apiUrl + query;
-            if (!string.IsNullOrWhiteSpace(param))
-                param = string.Empty;
-            string response = PostMethod(url, param, key);
-            if (response == null)
-                return default(T);
-            return (T)JsonConvert.DeserializeObject(response, typeof(T));
-        }
+        private int _requestId = (int)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
 
         public T CallAction<T>(DeviceObject device, string action, object param, LoginObject loginObject,
-            bool decryptResponse = false)
+                               bool decryptResponse = false)
         {
             if (device == null)
+            {
                 throw new ArgumentNullException("The device can't be null.");
+            }
+
             if (string.IsNullOrEmpty(device.Id))
+            {
                 throw new ArgumentException(
-                    "The id of the device is empty. Please call again the GetDevices Method and try again.");
+                                            "The id of the device is empty. Please call again the GetDevices Method and try again.");
+            }
 
             string query = $"/t_{HttpUtility.UrlEncode(loginObject.SessionToken)}_{HttpUtility.UrlEncode(device.Id)}{action}";
             CallActionObject callActionObject = new CallActionObject
@@ -79,16 +49,68 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
             json = Encrypt(json, loginObject.DeviceEncryptionToken);
             string response = PostMethod(url, json, loginObject.DeviceEncryptionToken);
 
-            if (response == null || (!response.Contains(callActionObject.RequestId.ToString()) && !response.Contains("\"rid\" : -1")))
+            if ((response == null) || (!response.Contains(callActionObject.RequestId.ToString()) && !response.Contains("\"rid\" : -1")))
             {
                 if (decryptResponse)
                 {
                     string tmp = Decrypt(response, loginObject.DeviceEncryptionToken);
                     return (T)JsonConvert.DeserializeObject(tmp, typeof(T));
                 }
+
                 throw new InvalidRequestIdException("The 'RequestId' differs from the 'Requestid' from the query.");
             }
+
             return (T)JsonConvert.DeserializeObject(response, typeof(T));
+        }
+
+        public T CallServer<T>(string query, byte[] key, string param = "")
+        {
+            string rid;
+            if (!string.IsNullOrEmpty(param))
+            {
+                if (key != null)
+                {
+                    param = Encrypt(param, key);
+                }
+
+                rid = _requestId.ToString();
+            }
+            else
+            {
+                rid = GetUniqueRid().ToString();
+            }
+
+            if (query.Contains("?"))
+            {
+                query += "&";
+            }
+            else
+            {
+                query += "?";
+            }
+
+            query += "rid=" + rid;
+            string signature = GetSignature(query, key);
+            query += "&signature=" + signature;
+
+            string url = _apiUrl + query;
+            if (!string.IsNullOrWhiteSpace(param))
+            {
+                param = string.Empty;
+            }
+
+            string response = PostMethod(url, param, key);
+            if (response == null)
+            {
+                return default;
+            }
+
+            return (T)JsonConvert.DeserializeObject(response, typeof(T));
+        }
+
+        private int GetUniqueRid()
+        {
+            return _requestId++;
         }
 
         private string PostMethod(string url, string body = "", byte[] ivKey = null)
@@ -150,6 +172,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
                                 Debug.WriteLine(resp);
                             }
                         }
+
                         return null;
                     }
                 }
@@ -162,6 +185,11 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
             }
         }
 
+        public void SetApiUrl(string newApiUrl)
+        {
+            _apiUrl = newApiUrl;
+        }
+
         #region "Encrypt, Decrypt and Signature"
 
         private string GetSignature(string data, byte[] key)
@@ -169,8 +197,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
             if (key == null)
             {
                 throw new Exception(
-                    "The ivKey is null. Please check your login informations. If it's still null the server may has disconnected you.");
+                                    "The ivKey is null. Please check your login informations. If it's still null the server may has disconnected you.");
             }
+
             var dataBytes = Encoding.UTF8.GetBytes(data);
             var hmacsha256 = new HMACSHA256(key);
             hmacsha256.ComputeHash(dataBytes);
@@ -183,9 +212,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
         {
             if (ivKey == null)
             {
-                throw new Exception(
-                    "The ivKey is null. Please check your login informations. If it's still null the server may has disconnected you.");
+                throw new Exception("The ivKey is null. Please check your login informations. If it's still null the server may has disconnected you.");
             }
+
             var iv = new byte[16];
             var key = new byte[16];
             for (int i = 0; i < 32; i++)
@@ -199,6 +228,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
                     key[i - 16] = ivKey[i];
                 }
             }
+
             var rj = new RijndaelManaged
             {
                 Key = key,
@@ -213,6 +243,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
             {
                 swEncrypt.Write(data);
             }
+
             byte[] encrypted = msEncrypt.ToArray();
             return Convert.ToBase64String(encrypted);
         }
@@ -221,9 +252,9 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
         {
             if (ivKey == null)
             {
-                throw new Exception(
-                    "The ivKey is null. Please check your login informations. If it's still null the server may has disconnected you.");
+                throw new Exception("The ivKey is null. Please check your login informations. If it's still null the server may has disconnected you.");
             }
+
             var iv = new byte[16];
             var key = new byte[16];
             for (int i = 0; i < 32; i++)
@@ -241,24 +272,28 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
             try
             {
                 byte[] cypher = Convert.FromBase64String(data);
-                var rj = new RijndaelManaged
+                using (var rj = new RijndaelManaged
                 {
                     BlockSize = 128,
                     Mode = CipherMode.CBC,
                     IV = iv,
                     Key = key
-                };
-                var ms = new MemoryStream(cypher);
-                string result;
-                using (var cs = new CryptoStream(ms, rj.CreateDecryptor(), CryptoStreamMode.Read))
+                })
                 {
-                    using (var sr = new StreamReader(cs))
+                    using (var ms = new MemoryStream(cypher))
                     {
-                        result = sr.ReadToEnd();
+                        string result;
+                        using (var cs = new CryptoStream(ms, rj.CreateDecryptor(), CryptoStreamMode.Read))
+                        {
+                            using (var sr = new StreamReader(cs))
+                            {
+                                result = sr.ReadToEnd();
+                            }
+                        }
+
+                        return result;
                     }
                 }
-                return result;
-
             }
             catch (Exception e)
             {
@@ -267,10 +302,5 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.ApiHandl
         }
 
         #endregion
-
-        private int GetUniqueRid()
-        {
-            return _requestId++;
-        }
     }
 }
