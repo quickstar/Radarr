@@ -1,6 +1,5 @@
 using FluentValidation;
 using NzbDrone.Core.Annotations;
-using NzbDrone.Core.Download.Clients.Nzbget;
 using NzbDrone.Core.ThingiProvider;
 using NzbDrone.Core.Validation;
 
