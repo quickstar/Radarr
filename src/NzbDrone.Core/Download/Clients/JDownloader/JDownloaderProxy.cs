@@ -1,5 +1,10 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using My.JDownloader.Api;
+using My.JDownloader.Api.Models.DownloadsV2;
+using My.JDownloader.Api.Models.LinkgrabberV2;
+using My.JDownloader.Api.Namespaces;
 using NLog;
 using NzbDrone.Common.Cache;
 using NzbDrone.Core.Download.Clients.JDownloader.ApiObjects.LinkgrabberV2;
@@ -8,9 +13,11 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
 {
     public interface IJDownloaderProxy
     {
-        long AddDlcFromUrl(string dlcLink, string packageName, JDownloaderSettings settings);
+        bool AddDlcFromUrl(string dlcLink, string packageName, JDownloaderSettings settings);
+        void CheckPackage(JDownloaderSettings settings, string releaseTitle);
+        IEnumerable<FilePackageObject> GetDownloadQueue(JDownloaderSettings settings);
         string GetVersion(JDownloaderSettings settings);
-        void CheckPackage(JDownloaderSettings settings, long packageId, string packageName);
+        string GetGlobalStatus(JDownloaderSettings settings);
     }
 
     public class JDownloaderProxy : IJDownloaderProxy
@@ -24,12 +31,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
             _versionCache = cacheManager.GetCache<string>(GetType(), "versions");
         }
 
-        public long AddDlcFromUrl(string dlcLink, string packageName, JDownloaderSettings settings)
+        public bool AddDlcFromUrl(string dlcLink, string packageName, JDownloaderSettings settings)
         {
             var deviceHandler = GetDeviceHandler(settings);
             if (deviceHandler == null)
             {
-                return 0;
+                return false;
             }
 
             var addLink = new AddLinkRequestObject
@@ -39,8 +46,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
                 Links = dlcLink,
                 PackageName = packageName
             };
-            var packageId = deviceHandler.LinkgrabberV2.AddLinks(addLink);
-            return packageId;
+            return deviceHandler.LinkgrabberV2.AddLinks(addLink);
         }
 
         public string GetVersion(JDownloaderSettings settings)
@@ -54,7 +60,21 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
             return version;
         }
 
-        public void CheckPackage(JDownloaderSettings settings, long packageId, string packageName)
+        public string GetGlobalStatus(JDownloaderSettings settings)
+        {
+            var deviceHandler = GetDeviceHandler(settings);
+            if (deviceHandler == null)
+            {
+                return "0";
+            }
+
+            var deviceStatus = deviceHandler.System.Device.Status;
+            var state2 = deviceHandler.DownloadController.GetCurrentState();
+
+            return state2;
+        }
+
+        public void CheckPackage(JDownloaderSettings settings, string packageName)
         {
             var deviceHandler = GetDeviceHandler(settings);
             if (deviceHandler == null)
@@ -69,8 +89,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
 
             var queryPackagesResponseObjects = deviceHandler
                 .LinkgrabberV2
-                .QueryPackages(new QueryPackagesRequestObject())
-                .Where(p => packageId.ToString().Substring(0, 7) == p.Uuid.ToString().Substring(0, 7));
+                .QueryPackages(new QueryPackagesRequestObject());
 
             foreach (var package in queryPackagesResponseObjects)
             {
@@ -86,9 +105,16 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
             deviceHandler.LinkgrabberV2.MoveToDownloadlist(queryLinks.Select(l => l.Id).ToArray(), new[] { packageToDownload });
         }
 
-        public void GetDownloadQueue(JDownloaderSettings settings)
+        public IEnumerable<FilePackageObject> GetDownloadQueue(JDownloaderSettings settings)
         {
+            var deviceHandler = GetDeviceHandler(settings);
+            if (deviceHandler == null)
+            {
+                return new List<FilePackageObject>();
+            }
 
+            var packages = deviceHandler.DownloadsV2.QueryPackages(new LinkQueryObject());
+            return packages;
         }
 
         private DeviceHandler GetDeviceHandler(JDownloaderSettings settings)

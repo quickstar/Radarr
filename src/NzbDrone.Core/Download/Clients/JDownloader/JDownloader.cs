@@ -30,9 +30,10 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
 
         public override string Download(RemoteMovie remoteMovie)
         {
-            var packageId = Proxy.AddDlcFromUrl(remoteMovie.Release.DownloadUrl, remoteMovie.Release.Title, Settings);
-
-            Proxy.CheckPackage(Settings, packageId, remoteMovie.Release.Title);
+            if (Proxy.AddDlcFromUrl(remoteMovie.Release.DownloadUrl, remoteMovie.Release.Title, Settings))
+            {
+                Proxy.CheckPackage(Settings, remoteMovie.Release.Title);
+            }
 
             return string.Empty;
         }
@@ -41,7 +42,21 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
 
         public override IEnumerable<DownloadClientItem> GetItems()
         {
-            return new List<DownloadClientItem>();
+            var status = Proxy.GetGlobalStatus(Settings);
+            var packages = Proxy.GetDownloadQueue(Settings);
+            var downloadItems = packages.Select(p => new DownloadClientItem
+            {
+                DownloadId = p.UUID.ToString(),
+                CanBeRemoved = true,
+                CanMoveFiles = true,
+                DownloadClient = Definition.Name,
+                TotalSize = p.BytesTotal,
+                Title = p.Name,
+                Status = p.Running ? DownloadItemStatus.Downloading : DownloadItemStatus.Paused,
+                RemainingSize = p.BytesTotal - p.BytesLoaded,
+                RemainingTime = new TimeSpan(p.Eta)
+            });
+            return downloadItems;
         }
 
         public override void RemoveItem(string downloadId, bool deleteData)
