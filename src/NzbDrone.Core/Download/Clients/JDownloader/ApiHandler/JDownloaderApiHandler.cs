@@ -7,21 +7,21 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using Newtonsoft.Json;
-using NzbDrone.Core.Download.Clients.JDownloader.ApiObjects.Action;
-using NzbDrone.Core.Download.Clients.JDownloader.ApiObjects.Devices;
-using NzbDrone.Core.Download.Clients.JDownloader.ApiObjects.Login;
 using NzbDrone.Core.Download.Clients.JDownloader.Exceptions;
+using NzbDrone.Core.Download.Clients.JDownloader.Models.Action;
+using NzbDrone.Core.Download.Clients.JDownloader.Models.Devices;
+using NzbDrone.Core.Download.Clients.JDownloader.Models.Login;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.ApiHandler
 {
     internal class JDownloaderApiHandler
     {
-        private string _ApiUrl = "http://api.jdownloader.org";
-        private int _RequestId = (int)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+        private int _requestId = (int) (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+        private string _apiUrl = "http://api.jdownloader.org";
 
         public void SetApiUrl(string newApiUrl)
         {
-            _ApiUrl = newApiUrl;
+            _apiUrl = newApiUrl;
         }
 
         public T CallServer<T>(string query, byte[] key, string param = "")
@@ -33,7 +33,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.ApiHandler
                 {
                     param = Encrypt(param, key);
                 }
-                rid = _RequestId.ToString();
+                rid = _requestId.ToString();
             }
             else
             {
@@ -47,7 +47,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.ApiHandler
             string signature = GetSignature(query, key);
             query += "&signature=" + signature;
 
-            string url = _ApiUrl + query;
+            string url = _apiUrl + query;
             if (!string.IsNullOrWhiteSpace(param))
                 param = string.Empty;
             string response = PostMethod(url, param, key);
@@ -74,7 +74,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.ApiHandler
                 Url = action
             };
 
-            string url = _ApiUrl + query;
+            string url = _apiUrl + query;
             string json = JsonConvert.SerializeObject(callActionObject);
             json = Encrypt(json, loginObject.DeviceEncryptionToken);
             string response = PostMethod(url, json, loginObject.DeviceEncryptionToken);
@@ -164,7 +164,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader.ApiHandler
 
         private int GetUniqueRid()
         {
-            return _RequestId++;
+            return _requestId++;
         }
 
         #region "Encrypt, Decrypt and Signature"

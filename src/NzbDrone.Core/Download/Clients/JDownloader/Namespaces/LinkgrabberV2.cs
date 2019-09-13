@@ -3,9 +3,9 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NzbDrone.Core.Download.Clients.JDownloader.ApiHandler;
-using NzbDrone.Core.Download.Clients.JDownloader.ApiObjects;
-using NzbDrone.Core.Download.Clients.JDownloader.ApiObjects.Devices;
-using NzbDrone.Core.Download.Clients.JDownloader.ApiObjects.LinkgrabberV2;
+using NzbDrone.Core.Download.Clients.JDownloader.Models;
+using NzbDrone.Core.Download.Clients.JDownloader.Models.Devices;
+using NzbDrone.Core.Download.Clients.JDownloader.Models.LinkgrabberV2;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.Namespaces
 {

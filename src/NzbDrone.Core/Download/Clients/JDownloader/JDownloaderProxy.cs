@@ -7,7 +7,7 @@ using My.JDownloader.Api.Models.LinkgrabberV2;
 using My.JDownloader.Api.Namespaces;
 using NLog;
 using NzbDrone.Common.Cache;
-using NzbDrone.Core.Download.Clients.JDownloader.ApiObjects.LinkgrabberV2;
+using NzbDrone.Core.Download.Clients.JDownloader.Models.LinkgrabberV2;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader
 {

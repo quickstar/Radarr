@@ -1,6 +1,6 @@
 using NzbDrone.Core.Download.Clients.JDownloader.ApiHandler;
-using NzbDrone.Core.Download.Clients.JDownloader.ApiObjects;
-using NzbDrone.Core.Download.Clients.JDownloader.ApiObjects.Devices;
+using NzbDrone.Core.Download.Clients.JDownloader.Models;
+using NzbDrone.Core.Download.Clients.JDownloader.Models.Devices;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader.Namespaces
 {
