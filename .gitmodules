@@ -2,3 +2,6 @@
 	path = src/ExternalModules/CurlSharp
 	url = https://github.com/Sonarr/CurlSharp.git
 	branch = master
+[submodule "src/ExternalModules/MyJDownloader.Api"]
+	path = src/ExternalModules/MyJDownloader.Api
+	url = https://github.com/quickstar/MyJDownloader.Api.git
