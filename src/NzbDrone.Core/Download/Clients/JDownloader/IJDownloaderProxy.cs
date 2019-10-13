@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.DownloadsV2;
+using Jdownloader.Api.Models.DownloadsV2;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader
 {
@@ -10,12 +10,14 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
 
         void CheckPackage(JDownloaderSettings settings, string releaseTitle);
 
-        IEnumerable<FilePackageObject> GetDownloadQueue(JDownloaderSettings settings);
+        string[] GetDownloadFolder(JDownloaderSettings settings);
+
+        IEnumerable<FilePackageDto> GetDownloadQueue(JDownloaderSettings settings);
 
         string GetGlobalStatus(JDownloaderSettings settings);
 
         string GetVersion(JDownloaderSettings settings);
 
-        string[] GetDownloadFolder(JDownloaderSettings settings);
+        void InitApi(JDownloaderSettings settings);
     }
 }

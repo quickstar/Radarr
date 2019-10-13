@@ -2,22 +2,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+using Jdownloader.Api;
+using Jdownloader.Api.Models;
+using Jdownloader.Api.Models.DownloadsV2;
+using Jdownloader.Api.Models.LinkgrabberV2;
+
 using NLog;
 
 using NzbDrone.Common.Cache;
-using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api;
-using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.DownloadsV2;
-using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.LinkgrabberV2;
-using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Namespaces;
 
 namespace NzbDrone.Core.Download.Clients.JDownloader
 {
     public class JDownloaderProxy : IJDownloaderProxy
     {
-        private static readonly object _lockObject = new object();
+        private JDownloaderApi _jDownloaderApi;
         private readonly Logger _logger;
         private readonly ICached<string> _versionCache;
-        private DeviceHandler _deviceHandler;
 
         public JDownloaderProxy(ICacheManager cacheManager, Logger logger)
         {
@@ -25,130 +25,79 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
             _versionCache = cacheManager.GetCache<string>(GetType(), "versions");
         }
 
+        public void InitApi(JDownloaderSettings settings)
+        {
+            _jDownloaderApi = GetJDownloaderApi(settings);
+        }
+
         public bool AddDlcFromUrl(string dlcLink, string packageName, JDownloaderSettings settings)
         {
-            var deviceHandler = GetDeviceHandler(settings);
-            if (deviceHandler == null)
-            {
-                return false;
-            }
-
-            var addLink = new AddLinkRequestObject
+            var addLink = new AddLinkRequestDto
             {
                 AutoExtract = true,
                 AutoStart = false,
                 Links = dlcLink,
                 PackageName = packageName
             };
-            return deviceHandler.LinkgrabberV2.AddLinks(addLink);
+            return _jDownloaderApi.LinkgrabberV2.AddLinks(addLink);
         }
 
         public void CheckPackage(JDownloaderSettings settings, string packageName)
         {
-            var deviceHandler = GetDeviceHandler(settings);
-            if (deviceHandler == null)
-            {
-                return;
-            }
-
-            while (deviceHandler.LinkgrabberV2.IsCollecting())
+            while (_jDownloaderApi.LinkgrabberV2.IsCollecting())
             {
                 Thread.Sleep(5000);
             }
 
-            var queryPackagesResponseObjects = deviceHandler
-                .LinkgrabberV2
-                .QueryPackages(new QueryPackagesRequestObject());
+            var queryPackagesResponseObjects = _jDownloaderApi.LinkgrabberV2.QueryPackages(new QueryPackagesRequestDto());
 
             foreach (var package in queryPackagesResponseObjects)
             {
-                deviceHandler.LinkgrabberV2.RenamePackage(package.Uuid, packageName);
+                _jDownloaderApi.LinkgrabberV2.RenamePackage(package.Uuid, packageName);
             }
 
-            var packageToDownload = deviceHandler
+            var packageToDownload = _jDownloaderApi
                 .LinkgrabberV2
-                .QueryPackages(new QueryPackagesRequestObject())
+                .QueryPackages(new QueryPackagesRequestDto())
                 .FirstOrDefault().Uuid;
 
-            var queryLinks = deviceHandler.LinkgrabberV2.QueryLinks();
-            deviceHandler.LinkgrabberV2.MoveToDownloadlist(queryLinks.Select(l => l.Id).ToArray(), new[] { packageToDownload });
+            var queryLinks = _jDownloaderApi.LinkgrabberV2.QueryLinks();
+            _jDownloaderApi.LinkgrabberV2.MoveToDownloadlist(queryLinks.Select(l => l.Id).ToArray(), new[] { packageToDownload });
         }
 
-        public IEnumerable<FilePackageObject> GetDownloadQueue(JDownloaderSettings settings)
+        public string[] GetDownloadFolder(JDownloaderSettings settings)
         {
-            var deviceHandler = GetDeviceHandler(settings);
-            if (deviceHandler == null)
-            {
-                return new List<FilePackageObject>();
-            }
-
-            var packages = deviceHandler.DownloadsV2.QueryPackages(new LinkQueryObject());
-            var downloadLinkObjects = deviceHandler.DownloadsV2.QueryLinks(new LinkQueryObject());
-            string[] downloadFolder = deviceHandler.LinkgrabberV2.GetDownloadFolderHistorySelectionBase();
-            return packages;
+            var downloadFolders = _jDownloaderApi.LinkgrabberV2.GetDownloadFolderHistorySelectionBase();
+            return downloadFolders;
         }
 
         public string GetGlobalStatus(JDownloaderSettings settings)
         {
-            var deviceHandler = GetDeviceHandler(settings);
-            if (deviceHandler == null)
-            {
-                return "0";
-            }
-
-            var state = deviceHandler.DownloadController.GetCurrentState();
+            var state = _jDownloaderApi.DownloadController.GetCurrentState();
 
             return state;
         }
 
         public string GetVersion(JDownloaderSettings settings)
         {
-            var deviceHandler = GetDeviceHandler(settings);
-            if (deviceHandler == null)
-            {
-                return "0";
-            }
-
-            var version = deviceHandler.Jd.Version().ToString();
+            var version = _jDownloaderApi.Jd.Version().ToString();
             return version;
         }
 
-        public string[] GetDownloadFolder(JDownloaderSettings settings)
+        public IEnumerable<FilePackageDto> GetDownloadQueue(JDownloaderSettings settings)
         {
-            var deviceHandler = GetDeviceHandler(settings);
-            if (deviceHandler == null)
-            {
-                return null;
-            }
-
-            var downloadFolders = deviceHandler.LinkgrabberV2.GetDownloadFolderHistorySelectionBase();
-            return downloadFolders;
+            var packages = _jDownloaderApi.DownloadsV2.QueryPackages(new LinkQueryDto());
+            return packages;
         }
 
-        private DeviceHandler GetDeviceHandler(JDownloaderSettings settings)
+        private JDownloaderApi GetJDownloaderApi(JDownloaderSettings settings)
         {
-            if (_deviceHandler != null)
-            {
-                return _deviceHandler;
-            }
+            var auth = new JDownloaderCredentials { Username = settings.EMail, Password = settings.Password };
+            var jdContext = new JDownloaderFactory().Create(auth);
+            DevicesDto availableDevices = jdContext.GetDevices();
 
-            lock (_lockObject)
-            {
-                if (_deviceHandler != null)
-                {
-                    return _deviceHandler;
-                }
-
-                JDownloaderHandler jdownloaderHandler = new JDownloaderHandler(settings.EMail, settings.Password, "JDownloaderProxy");
-                if (jdownloaderHandler.IsConnected)
-                {
-                    var device = jdownloaderHandler.GetDevices().FirstOrDefault();
-                    _deviceHandler = jdownloaderHandler.GetDeviceHandler(device);
-                    return _deviceHandler;
-                }
-            }
-
-            return null;
+            var deviceApi = jdContext.SetDevice(availableDevices.List.First());
+            return deviceApi;
         }
     }
 }

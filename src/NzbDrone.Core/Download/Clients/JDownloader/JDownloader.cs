@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentValidation.Results;
+
+using Jdownloader.Api.Models.DownloadsV2;
+
 using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
-using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.DownloadsV2;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
@@ -23,6 +25,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
                       Logger logger)
             : base(proxy, configService, namingConfigService, diskProvider, remotePathMappingService, logger)
         {
+            proxy.InitApi(Settings);
         }
 
         public override string Name => "JDownloader";
@@ -49,7 +52,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
                 DownloadClient = Definition.Name,
                 TotalSize = p.BytesTotal,
                 Title = p.Name,
-                Status = GetItemStatus(p, globalStatus),
+                Status = GetDownloadItemStatus(p, globalStatus),
                 RemainingSize = p.BytesTotal - p.BytesLoaded,
                 RemainingTime = TimeSpan.FromSeconds(p.Eta)
             });
@@ -65,7 +68,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
             return completedList;
         }
 
-        private DownloadItemStatus GetItemStatus(FilePackageObject package, string status)
+        private DownloadItemStatus GetDownloadItemStatus(FilePackageDto package, string status)
         {
             if (package.Status.Contains("Extraction OK"))
             {
