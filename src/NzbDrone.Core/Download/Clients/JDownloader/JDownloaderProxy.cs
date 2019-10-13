@@ -14,8 +14,10 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
 {
     public class JDownloaderProxy : IJDownloaderProxy
     {
+        private static readonly object _lockObject = new object();
         private readonly Logger _logger;
         private readonly ICached<string> _versionCache;
+        private DeviceHandler _deviceHandler;
 
         public JDownloaderProxy(ICacheManager cacheManager, Logger logger)
         {
@@ -51,7 +53,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
 
             while (deviceHandler.LinkgrabberV2.IsCollecting())
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(5000);
             }
 
             var queryPackagesResponseObjects = deviceHandler
@@ -81,6 +83,8 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
             }
 
             var packages = deviceHandler.DownloadsV2.QueryPackages(new LinkQueryObject());
+            var downloadLinkObjects = deviceHandler.DownloadsV2.QueryLinks(new LinkQueryObject());
+            string[] downloadFolder = deviceHandler.LinkgrabberV2.GetDownloadFolderHistorySelectionBase();
             return packages;
         }
 
@@ -109,13 +113,39 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
             return version;
         }
 
+        public string[] GetDownloadFolder(JDownloaderSettings settings)
+        {
+            var deviceHandler = GetDeviceHandler(settings);
+            if (deviceHandler == null)
+            {
+                return null;
+            }
+
+            var downloadFolders = deviceHandler.LinkgrabberV2.GetDownloadFolderHistorySelectionBase();
+            return downloadFolders;
+        }
+
         private DeviceHandler GetDeviceHandler(JDownloaderSettings settings)
         {
-            JDownloaderHandler jdownloaderHandler = new JDownloaderHandler(settings.EMail, settings.Password, "JDownloaderProxy");
-            if (jdownloaderHandler.IsConnected)
+            if (_deviceHandler != null)
             {
-                var device = jdownloaderHandler.GetDevices().FirstOrDefault();
-                return jdownloaderHandler.GetDeviceHandler(device);
+                return _deviceHandler;
+            }
+
+            lock (_lockObject)
+            {
+                if (_deviceHandler != null)
+                {
+                    return _deviceHandler;
+                }
+
+                JDownloaderHandler jdownloaderHandler = new JDownloaderHandler(settings.EMail, settings.Password, "JDownloaderProxy");
+                if (jdownloaderHandler.IsConnected)
+                {
+                    var device = jdownloaderHandler.GetDevices().FirstOrDefault();
+                    _deviceHandler = jdownloaderHandler.GetDeviceHandler(device);
+                    return _deviceHandler;
+                }
             }
 
             return null;

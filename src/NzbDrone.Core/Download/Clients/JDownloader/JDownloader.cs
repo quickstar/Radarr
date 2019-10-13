@@ -6,6 +6,7 @@ using NLog;
 using NzbDrone.Common.Disk;
 using NzbDrone.Common.Extensions;
 using NzbDrone.Core.Configuration;
+using NzbDrone.Core.Download.Clients.JDownloader.My.Jdownloader.Api.Models.DownloadsV2;
 using NzbDrone.Core.Organizer;
 using NzbDrone.Core.Parser.Model;
 using NzbDrone.Core.RemotePathMappings;
@@ -38,7 +39,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
 
         public override IEnumerable<DownloadClientItem> GetItems()
         {
-            var status = Proxy.GetGlobalStatus(Settings);
+            var globalStatus = Proxy.GetGlobalStatus(Settings);
             var packages = Proxy.GetDownloadQueue(Settings);
             var downloadItems = packages.Select(p => new DownloadClientItem
             {
@@ -48,11 +49,44 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
                 DownloadClient = Definition.Name,
                 TotalSize = p.BytesTotal,
                 Title = p.Name,
-                Status = p.Running ? DownloadItemStatus.Downloading : DownloadItemStatus.Paused,
+                Status = GetItemStatus(p, globalStatus),
                 RemainingSize = p.BytesTotal - p.BytesLoaded,
-                RemainingTime = new TimeSpan(p.Eta)
+                RemainingTime = TimeSpan.FromSeconds(p.Eta)
             });
-            return downloadItems;
+            var completedList = downloadItems.Where(p => p.Status == DownloadItemStatus.Completed).ToList();
+            var downloadFolders = Proxy.GetDownloadFolder(Settings);
+            foreach (var completedPackage in completedList)
+            {
+                var completeRemotePath = downloadFolders.FirstOrDefault().TrimEnd("/") + "/" + completedPackage.Title;
+                var osPath = new OsPath(completeRemotePath);
+                var remappedPath = _remotePathMappingService.RemapRemoteToLocal(Settings.Host, osPath);
+                completedPackage.OutputPath = remappedPath;
+            }
+            return completedList;
+        }
+
+        private DownloadItemStatus GetItemStatus(FilePackageObject package, string status)
+        {
+            if (package.Status.Contains("Extraction OK"))
+            {
+                return DownloadItemStatus.Completed;
+            }
+
+            if (status == "PAUSE")
+            {
+                return DownloadItemStatus.Paused;
+            }
+            if (status == "STOPPED_STATE")
+            {
+                return DownloadItemStatus.Queued;
+            }
+
+            if (package.Running)
+            {
+                return DownloadItemStatus.Downloading;
+            }
+
+            return DownloadItemStatus.Failed;
         }
 
         public override void RemoveItem(string downloadId, bool deleteData)
@@ -61,7 +95,12 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
 
         public override DownloadClientStatus GetStatus()
         {
-            return new DownloadClientStatus();
+            var downloadFolders = Proxy.GetDownloadFolder(Settings);
+            return new DownloadClientStatus
+            {
+                IsLocalhost = false,
+                OutputRootFolders = downloadFolders.Select(df => new OsPath(df)).ToList()
+            };
         }
 
         protected override void Test(List<ValidationFailure> failures)

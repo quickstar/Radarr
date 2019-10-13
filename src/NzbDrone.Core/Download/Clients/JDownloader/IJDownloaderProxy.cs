@@ -15,5 +15,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
         string GetGlobalStatus(JDownloaderSettings settings);
 
         string GetVersion(JDownloaderSettings settings);
+
+        string[] GetDownloadFolder(JDownloaderSettings settings);
     }
 }
