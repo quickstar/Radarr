@@ -24,9 +24,7 @@ namespace NzbDrone.Core.Download.Clients.JDownloader
                       IRemotePathMappingService remotePathMappingService,
                       Logger logger)
             : base(proxy, configService, namingConfigService, diskProvider, remotePathMappingService, logger)
-        {
-            proxy.InitApi(Settings);
-        }
+        {}
 
         public override string Name => "JDownloader";
 
